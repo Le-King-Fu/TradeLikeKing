@@ -1,8 +1,13 @@
 from lnmarkets import rest
+from lnmarkets import websockets
 import requests
 import logging
 
+#apprendre a utiliser logging
 logging.basicConfig(level=logging.INFO)
+
+minimum_balance = 100000
+maximum_trade = 45
 
 def main():
     get_info()
@@ -11,25 +16,25 @@ def main():
     get_price_LNMarket()
 
 def connect_read():
-    options = {'key': 'key',
-            'secret': 'secret',
-            'passphrase': 'passphrase',
+    options = {'key': 'HNhmV3BkqPQfuV/IdX2c5ORp71+JxFvq1eXRi6rmsNw=',
+            'secret': '4rgJHL3kDF56Yo21DJSpbSvKxWnmP0goYXUvc73hLdO3/28JF1dPxUki4/FDrf1lZ8EfAn3M00Wyp3KtTfVC2A==',
+            'passphrase': 'f9c759a29ic1',
             'network': 'mainnet'}
     lnm = rest.LNMarketsRest(**options)
     return lnm
 
 def connect_write():
-    options = {'key': 'key',
-            'secret': 'secret',
-            'passphrase': 'passphrase',
-            'network': 'mainnet'}
+    options = {'key' : 'IlDl2Vsh+huaL+NG+bXIXeeMDiKh2xZlK0Kkc1WwjUE=',
+                'secret' : 'T/V4kklazjmqwBQUK6M0PuaPjWt0k1zCwVg+n+nidEOpAsynMz4b5xDxZBOCUhRzlXIZHmfNfwmEm+MfZATUew==',
+                'passphrase' : 'i590d0hbhh5j',
+                'network' : 'mainnet'}
     lnm = rest.LNMarketsRest(**options)
     return lnm
 
 def connect_trades():
-    options = {'key': 'key',
-            'secret': 'secret',
-            'passphrase': 'passphrase',
+    options = {'key': 'DEbJ3mDzukA8trPwUCzwnh1K5x8n476lEvrLic+XCkM=',
+            'secret': 'ueQPWd7hMXudJxHLRboQPIvsYhHNp0lsB6DF/e+VnEE1/0E0MtiY3/IspReWfgN4FbLDSrDGrmk0rzDGUtPuMw==',
+            'passphrase': 'j8g6ec2h2c2e',
             'network': 'mainnet'}
     lnm = rest.LNMarketsRest(**options)
     return lnm
@@ -57,6 +62,15 @@ def get_price_LNMarket():
     bitcoin_price = float(data['lastPrice'])
     bitcoin_price_formatted = "{:.2f}".format(bitcoin_price)
     print("LN Market : "+ bitcoin_price_formatted)
+
+def check_balance():
+    username, balance, nb_trx = get_info()
+    if balance > minimum_balance and maximum_trade <= 45:
+        balance = "OK"
+        return balance
+    else:
+        balance = "NOT OK"
+        return balance
 
 ##Alpha Avantage, les prix laguent un peu
 def get_price_Alpha():
