@@ -2,6 +2,23 @@ from lnmarkets import rest
 from lnmarkets import websockets
 import requests
 import logging
+import os
+import json
+import pandas as pd
+
+# Get the current working directory
+current_directory = os.getcwd()
+
+# Define the output directory and file name
+output_dir = os.path.join(current_directory, 'output_data')
+signal_current = 'info.json'
+
+# Create the output directory if it doesn't exist
+if not os.path.exists(output_dir):
+    os.makedirs(output_dir)
+
+# Construct the full file path
+file_path_summ = os.path.join(output_dir, signal_current)
 
 #apprendre a utiliser logging
 logging.basicConfig(level=logging.INFO)
@@ -10,31 +27,34 @@ minimum_balance = 100000
 maximum_trade = 45
 
 def main():
-    get_info()
+    #get_info()
+    #check_balance()
+    #get_nb_trx()
     #get_price_Alpha()
-    get_price_Binance()
-    get_price_LNMarket()
+    #get_price_Binance()
+    #get_price_LNMarket()
+    return
 
 def connect_read():
-    options = {'key': 'HNhmV3BkqPQfuV/IdX2c5ORp71+JxFvq1eXRi6rmsNw=',
-            'secret': '4rgJHL3kDF56Yo21DJSpbSvKxWnmP0goYXUvc73hLdO3/28JF1dPxUki4/FDrf1lZ8EfAn3M00Wyp3KtTfVC2A==',
-            'passphrase': 'f9c759a29ic1',
+    options = {'key': 'key',
+            'secret': 'secret',
+            'passphrase': 'passphrase',
             'network': 'mainnet'}
     lnm = rest.LNMarketsRest(**options)
     return lnm
 
 def connect_write():
-    options = {'key' : 'IlDl2Vsh+huaL+NG+bXIXeeMDiKh2xZlK0Kkc1WwjUE=',
-                'secret' : 'T/V4kklazjmqwBQUK6M0PuaPjWt0k1zCwVg+n+nidEOpAsynMz4b5xDxZBOCUhRzlXIZHmfNfwmEm+MfZATUew==',
-                'passphrase' : 'i590d0hbhh5j',
+    options = {'key' : 'key',
+                'secret' : 'secret',
+                'passphrase' : 'passphrase',
                 'network' : 'mainnet'}
     lnm = rest.LNMarketsRest(**options)
     return lnm
 
 def connect_trades():
-    options = {'key': 'DEbJ3mDzukA8trPwUCzwnh1K5x8n476lEvrLic+XCkM=',
-            'secret': 'ueQPWd7hMXudJxHLRboQPIvsYhHNp0lsB6DF/e+VnEE1/0E0MtiY3/IspReWfgN4FbLDSrDGrmk0rzDGUtPuMw==',
-            'passphrase': 'j8g6ec2h2c2e',
+    options = {'key': 'key',
+            'secret': 'secret',
+            'passphrase': 'passphrase',
             'network': 'mainnet'}
     lnm = rest.LNMarketsRest(**options)
     return lnm
@@ -42,17 +62,11 @@ def connect_trades():
 def get_info():
     info = connect_read()
     user_info = info.get_user(format='json')
-    username = user_info['username']
-    balance = user_info['balance']
     #print(user_info)
-    nb_trx_buy = user_info['metrics']['futures']['buy']['running_positions']
-    nb_trx_sell = user_info['metrics']['futures']['sell']['running_positions']
-    nb_trx = int(nb_trx_buy) + int(nb_trx_sell)
-    print(nb_trx_buy)
-    print(nb_trx_sell)
-    print(nb_trx)
-    #nb_trx = user_info['running_positions']
-    return username, balance, nb_trx
+
+    with open(file_path_summ, 'w') as json_file:
+        json.dump(user_info, json_file, indent=2)
+    #return username, balance, nb_trx
     
 def get_price_LNMarket():
     info = connect_read()
@@ -64,13 +78,27 @@ def get_price_LNMarket():
     print("LN Market : "+ bitcoin_price_formatted)
 
 def check_balance():
-    username, balance, nb_trx = get_info()
+    with open(file_path_summ, 'r') as json_file:
+        info = pd.read_json(json_file)
+    balance = info["balance"]["wallet"]
     if balance > minimum_balance and maximum_trade <= 45:
         balance = "OK"
         return balance
     else:
         balance = "NOT OK"
         return balance
+
+def get_nb_trx():
+    with open(file_path_summ, 'r') as json_file:
+       user_info = pd.read_json(json_file)   
+    
+    nb_trx_buy = user_info['metrics']['futures']['buy']['running_positions']
+    nb_trx_sell = user_info['metrics']['futures']['sell']['running_positions']
+    nb_trx = int(nb_trx_buy) + int(nb_trx_sell)
+    #print(nb_trx_buy)
+    #print(nb_trx_sell)
+    #print(nb_trx)
+    return nb_trx
 
 ##Alpha Avantage, les prix laguent un peu
 def get_price_Alpha():
