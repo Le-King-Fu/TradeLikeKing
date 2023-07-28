@@ -13,17 +13,19 @@ start_time = time.time()
 def main():
     while time.time() - start_time < total_duration:
         ln.get_info()
-        print(datetime.datetime.now())
-        signal.get_all_signal(interval_list)
-        print()
         ln.get_price_Binance()
         print()
         ln.get_price_LNMarket()
         print()
+        print(datetime.datetime.now())
+        signal.get_all_signal(interval_list)
+        print()
         signal.print_all_signal()
         signal.get_main_signal_new()
+        print()
         if ln.get_nb_trx() == 0:
             print("No transaction")
+            print()
         else: 
             an.get_trades()
             an.print_trades()
@@ -48,9 +50,9 @@ def main():
  
         trade.open_futures_long_aggro()
         trade.open_futures_short_aggro()
-        
+        print()
+        signal.get_historic_signal()
         time.sleep(time_interval)    
  
 if __name__ == "__main__":
     main()
-

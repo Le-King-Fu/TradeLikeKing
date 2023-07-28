@@ -6,9 +6,9 @@ import datetime
 import pandas as pd
 
 add_margin_amount = 1000
-new_futures_amount = 1000
-leverage = 50
-minute_pause = 20
+new_futures_amount = 2000
+leverage = 100
+minute_pause = 60
 minimum_balance = 100000
 maximum_trades = 45
 
@@ -99,12 +99,14 @@ def add_margin():
 """
 J'essaie plus agressif, j'ouvre apres 2 strong et je ferme quand ca change.
 """
+min_n_aggro = 3
+
 def open_futures_long_aggro():
     balance = ln.check_balance()
     time_difference = get_time_diff()
     count = signal.get_long_seq()
     print("Consecutive STRONG BUY : ",count)
-    if count == 2 and time_difference >= datetime.timedelta(minutes=minute_pause) and balance == "OK":
+    if count >= min_n_aggro and time_difference >= datetime.timedelta(minutes=minute_pause) and balance == "OK":
         lnm = ln.connect_write()        
         opened_future = lnm.futures_new_position({
             'type': 'm', # m for market of l for limit
@@ -120,7 +122,7 @@ def open_futures_short_aggro():
     #nb STRONG_SELL consecutifs
     count = signal.get_short_seq()
     print("Consecutive STRONG SELL : ",count)
-    if count >= 2 and time_difference >= datetime.timedelta(minutes=minute_pause) and balance == "OK":
+    if count >= min_n_aggro and time_difference >= datetime.timedelta(minutes=minute_pause) and balance == "OK":
         lnm = ln.connect_write()  
         opened_future = lnm.futures_new_position({
             'type': 'm', # m for market of l for limit
