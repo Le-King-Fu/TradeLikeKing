@@ -124,7 +124,7 @@ def print_trades():
                               "pl_w_fees",
                               'pl_w_fees_pct',
                               'margin_call',
-                              'close']]
+                              'in_profit']]
     print(selected_col)
 
 def rec_trx(row):

@@ -141,7 +141,7 @@ def close_futures_long_aggro():
         close_position = lnm.futures_close_position({'id': id})
         print(close_position)
         #print(str(id))   
-#il y a un bogue, pas réussi à le noter...
+
 def close_futures_short_aggro():
     lnm = ln.connect_write() 
     id_list = []
