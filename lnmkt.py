@@ -6,22 +6,22 @@ import os
 import json
 import pandas as pd
 
-# Get the current working directory
-current_directory = os.getcwd()
+key_API_read = os.environ.get("key_API_read")
+key_API_write = os.environ.get("key_API_write")
+secret_API_read = os.environ.get("secret_API_read")
+secret_API_write = os.environ.get("secret_API_write")
+passphrase_API_read = os.environ.get("passphrase_API_read")
+passphrase_API_write = os.environ.get("passphrase_API_write")
 
-# Define the output directory and file name
+current_directory = os.getcwd()
 output_dir = os.path.join(current_directory, 'output_data')
 signal_current = 'info.json'
-
-# Create the output directory if it doesn't exist
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
-
-# Construct the full file path
 file_path_summ = os.path.join(output_dir, signal_current)
 
 #apprendre a utiliser logging
-logging.basicConfig(level=logging.INFO)
+#logging.basicConfig(level=logging.INFO)
 
 minimum_balance = 100000
 maximum_trade = 45
@@ -36,21 +36,22 @@ def main():
     return
 
 def connect_read():
-    options = {'key': 'key',
-            'secret': 'secret',
-            'passphrase': 'passphrase',
+    options = {'key': str(key_API_read),
+            'secret': str(secret_API_read),
+            'passphrase': str(passphrase_API_read),
             'network': 'mainnet'}
     lnm = rest.LNMarketsRest(**options)
     return lnm
 
 def connect_write():
-    options = {'key' : 'key',
-                'secret' : 'secret',
-                'passphrase' : 'passphrase',
+    options = {'key' : str(key_API_write),
+                'secret' : str(secret_API_write),
+                'passphrase' : str(passphrase_API_write),
                 'network' : 'mainnet'}
     lnm = rest.LNMarketsRest(**options)
     return lnm
 
+#pas certain que c'est utilisé - à confirmer
 def connect_trades():
     options = {'key': 'key',
             'secret': 'secret',
