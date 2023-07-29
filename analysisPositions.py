@@ -10,7 +10,7 @@ import json
 total_duration = 60 * 60
 time_interval = 60
 start_time = time.time()
-target = 0.30
+target = 0.10
 
 # Get the current working directory
 current_directory = os.getcwd()
@@ -34,8 +34,41 @@ def main():
     #print_trades()
     #get_trades_json()
     #print_trades()
-    return       
+    print()
+    #return       
 
+
+"""
+Erreur pogné 2023-07-28 - 
+Traceback (most recent call last):
+  File "/home/max/.local/lib/python3.10/site-packages/requests/models.py", line 971, in json
+    return complexjson.loads(self.text, **kwargs)
+  File "/usr/lib/python3.10/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+  File "/usr/lib/python3.10/json/decoder.py", line 340, in decode
+    raise JSONDecodeError("Extra data", s, end)
+json.decoder.JSONDecodeError: Extra data: line 1 column 5 (char 4)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/max/Documents/Code/btc/DEV/launch.py", line 58, in <module>
+    main()
+  File "/home/max/Documents/Code/btc/DEV/launch.py", line 30, in main
+    an.get_trades()
+  File "/home/max/Documents/Code/btc/DEV/analysisPositions.py", line 41, in get_trades
+    trade_info = lnm.futures_get_positions({
+  File "/home/max/.local/lib/python3.10/site-packages/lnmarkets/rest.py", line 162, in futures_get_positions
+    return self.before_request_api(method, path, params, credentials, format)
+  File "/home/max/.local/lib/python3.10/site-packages/lnmarkets/rest.py", line 100, in before_request_api
+    return self.request_api(method, path, params, credentials, format)
+  File "/home/max/.local/lib/python3.10/site-packages/lnmarkets/rest.py", line 93, in request_api
+    return response.json()
+  File "/home/max/.local/lib/python3.10/site-packages/requests/models.py", line 975, in json
+    raise RequestsJSONDecodeError(e.msg, e.doc, e.pos)
+requests.exceptions.JSONDecodeError: Extra data: line 1 column 5 (char 4)
+
+"""
 def get_trades():
     lnm = ln.connect_trades()
     trade_info = lnm.futures_get_positions({
@@ -65,7 +98,7 @@ def get_trades():
     #remplacé en splittant les 2 fct de Close
     #df_trades["rec"] = df_trades.apply(rec_trx, axis = 1)
     df_trades["margin_call"] = df_trades.apply(lambda row: 1 if row['pl_pct'] < -90/100 else 0, axis = 1)
-    df_trades["close"] = df_trades.apply(lambda row: 1 if row['pl_w_fees_pct'] > target else 0, axis = 1)
+    df_trades["in_profit"] = df_trades.apply(lambda row: 1 if row['pl_w_fees_pct'] > target else 0, axis = 1)
     #commenté car la colonne rec ne marche pas : """ and ['rec'] == "short"""
     #print(trade_info)
     df_trades.to_json(file_path_summ)
@@ -125,7 +158,7 @@ def get_list_close_long():
     with open(file_path_summ, 'r') as json_file:
         df_trades = pd.read_json(json_file)
     for index, row in df_trades.iterrows():
-        if row['close'] == 1 and row['side'] == 'b' and rec == 'STRONG_SELL':
+        if row['in_profit'] == 1 and row['side'] == 'b' and rec == 'STRONG_SELL':
             id_list.append(row['id'])
     return id_list
 
@@ -136,15 +169,17 @@ def get_list_close_short():
     with open(file_path_summ, 'r') as json_file:
         df_trades = pd.read_json(json_file)
     for index, row in df_trades.iterrows():
-        if row['close'] == 1 and row['side'] == 's' and rec == 'STRONG_BUY':
+        if row['in_profit'] == 1 and row['side'] == 's' and rec == 'STRONG_BUY':
             id_list.append(row['id'])
     return id_list
 
 #Version agressive
+#chg : éviter les closures trop rapide, check ROI a compensé par margin check et close sur signal plus rapide (1m)
 
 def get_list_close_long_aggro():
     id_list = []
     rec = signal.get_main_signal_new()
+    rec_1m = signal.get_1m_signal_new()
     closeif = ['BUY','STRONG_BUY','NEUTRAL']
     #df_trades = get_trades()
     with open(file_path_summ, 'r') as json_file:
@@ -152,26 +187,28 @@ def get_list_close_long_aggro():
 
     for index, row in df_trades.iterrows():
         #on enleve control sur profit
-        #if row['close'] == 1 and row['side'] == 'b' and rec not in closeif:
-        if row['side'] == 'b' and rec not in closeif:
+        if row['in_profit'] == 1 and row['side'] == 'b' and rec_1m not in closeif:
+        #if row['side'] == 'b' and rec not in closeif:
             id_list.append(row['id'])
     return id_list
 
 def get_list_close_short_aggro():
     id_list = []
     rec = signal.get_main_signal_new()
+    rec_1m = signal.get_1m_signal_new()
     closeif = ['SELL','STRONG_SELL','NEUTRAL']
     #df_trades = get_trades()
     with open(file_path_summ, 'r') as json_file:
         df_trades = pd.read_json(json_file)
     for index, row in df_trades.iterrows():
-        #on enleve control sur profit
-        #if row['close'] == 1 and row['side'] == 's' and rec not in closeif:
-        if row['side'] == 's' and rec not in closeif:
+        #j'ai remis le profit check, mais baissé ROI = 10
+
+        if row['in_profit'] == 1 and row['side'] == 's' and rec_1m not in closeif:
+        #if row['side'] == 's' and rec not in closeif:
             id_list.append(row['id'])
     return id_list
 
-    
+ ##a corriger pcq stuck sur l'ancienne trx lorsque no trx
 def last_trx():
     #df_trades = get_trades()
     with open(file_path_summ, 'r') as json_file:

@@ -80,6 +80,13 @@ def get_main_signal_new():
     rec = data[interval_main]['RECOMMENDATION']
     #print(signal['RECOMMENDATION'])
     return rec
+
+def get_1m_signal_new():
+    with open(file_path_summ, 'r') as json_file:
+        data = json.load(json_file)
+    rec = data["1m"]['RECOMMENDATION']
+    #print(signal['RECOMMENDATION'])
+    return rec
     
 """
 def get_main_signal():
