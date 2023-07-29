@@ -3,3 +3,4 @@
 
 # ignore folder data json
 output_data/
+__pycache__/
