@@ -1,5 +1,0 @@
-# .gitignore
-.env
-
-# ignore folder data json
-output_data/
