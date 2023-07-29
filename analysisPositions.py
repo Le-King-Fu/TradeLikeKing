@@ -211,11 +211,14 @@ def get_list_close_short_aggro():
  ##a corriger pcq stuck sur l'ancienne trx lorsque no trx
 def last_trx():
     #df_trades = get_trades()
-    with open(file_path_summ, 'r') as json_file:
-        df_trades = pd.read_json(json_file)
-    max_timestamp = df_trades['creation_ts'].max()
-    #print(max_timestamp)
-    return max_timestamp
+    if ln.get_nb_trx() == 0:
+        return 0
+    else:
+        with open(file_path_summ, 'r') as json_file:
+            df_trades = pd.read_json(json_file)
+        max_timestamp = df_trades['creation_ts'].max()
+        #print(max_timestamp)
+        return max_timestamp
 
 if __name__ == "__main__":
     main()
