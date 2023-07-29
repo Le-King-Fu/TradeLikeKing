@@ -12,6 +12,9 @@ secret_API_read = os.environ.get("secret_API_read")
 secret_API_write = os.environ.get("secret_API_write")
 passphrase_API_read = os.environ.get("passphrase_API_read")
 passphrase_API_write = os.environ.get("passphrase_API_write")
+key_API_trades = os.environ.get("key_API_trades")
+secret_API_trades = os.environ.get("secret_API_trades")
+passphrase_API_trades = os.environ.get("passphrase_API_trades")
 
 current_directory = os.getcwd()
 output_dir = os.path.join(current_directory, 'output_data')
@@ -51,11 +54,11 @@ def connect_write():
     lnm = rest.LNMarketsRest(**options)
     return lnm
 
-#pas certain que c'est utilisé - à confirmer
+#utilisé pour avoir trades_summary
 def connect_trades():
-    options = {'key': 'key',
-            'secret': 'secret',
-            'passphrase': 'passphrase',
+    options = {'key' : str(key_API_trades),
+                'secret' : str(secret_API_trades),
+                'passphrase' : str(passphrase_API_trades),
             'network': 'mainnet'}
     lnm = rest.LNMarketsRest(**options)
     return lnm
