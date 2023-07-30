@@ -47,6 +47,7 @@ def main():
             ### Version Agressive ###
             trade.close_futures_short_aggro()
             trade.close_futures_long_aggro()
+            an.get_trades_closed()
             an.get_closing_msg_long()
             an.get_closing_msg_long()
  
