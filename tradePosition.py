@@ -136,10 +136,10 @@ def close_futures_long_aggro():
     lnm = ln.connect_write()  
     id_list = []
     id_list = an.get_list_close_long_aggro()
-    print(id_list)   
+    #print(id_list)   
     for id in id_list:
         close_position = lnm.futures_close_position({'id': id})
-        print(close_position)
+        #print(close_position)
         #print(str(id))   
 
 def close_futures_short_aggro():
@@ -150,7 +150,7 @@ def close_futures_short_aggro():
     for id in id_list:
         #id = str(id)
         close_position = lnm.futures_close_position({'id': id})
-        print(str(close_position))
+        #print(str(close_position))
 
 if __name__ == "__main__":
     main()

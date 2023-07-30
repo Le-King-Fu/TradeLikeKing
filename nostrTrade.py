@@ -31,7 +31,7 @@ def get_keys():
     print(f"Public key: {public_key.bech32()}")
 
 #faut trouver une facon de reutiliser
-def send_msg():
+def send_msg(msg):
     private_key = PrivateKey()
     relay_manager = RelayManager()
     relay_manager.add_relay("wss://nostr-pub.wellorder.net")
@@ -40,7 +40,7 @@ def send_msg():
 
     dm = EncryptedDirectMessage(
         recipient_pubkey=npub,
-        cleartext_content="Secret message! #2"
+        cleartext_content=msg
         )
     
     private_key.sign_event(dm)

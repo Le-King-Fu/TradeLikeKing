@@ -27,8 +27,8 @@ def main():
             print("No transaction")
             print()
         else: 
-            an.get_trades()
-            an.print_trades()
+            an.get_trades_running()
+            an.print_trades_running()
             print()
             print("Margin call :", an.get_list_margin())
             trade.add_margin()
@@ -47,6 +47,8 @@ def main():
             ### Version Agressive ###
             trade.close_futures_short_aggro()
             trade.close_futures_long_aggro()
+            an.get_closing_msg_long()
+            an.get_closing_msg_long()
  
         trade.open_futures_long_aggro()
         trade.open_futures_short_aggro()

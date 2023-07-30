@@ -6,6 +6,7 @@ import Signal_TradingView as signal
 import lnmkt as ln
 import os
 import json
+import nostrTrade as ns
 
 total_duration = 60 * 60
 time_interval = 60
@@ -18,6 +19,7 @@ current_directory = os.getcwd()
 # Define the output directory and file name
 output_dir = os.path.join(current_directory, 'output_data')
 trade_summary = 'trade_summary.json'
+trade_summary_closed = 'trade_closed_summary.json'
 
 # Create the output directory if it doesn't exist
 if not os.path.exists(output_dir):
@@ -25,13 +27,16 @@ if not os.path.exists(output_dir):
 
 # Construct the full file path
 file_path_summ = os.path.join(output_dir, trade_summary)
+file_path_summ_closed = os.path.join(output_dir, trade_summary_closed)
 # Export the DataFrame to the JSON file
 trades_json = ''
 
 def main():
     #get_test()
-    #get_trades()
-    #print_trades()
+    #get_trades_running()
+    #print_trades_running()
+    #get_trades_closed()
+    #get_closing_msg_short()
     #get_trades_json()
     #print_trades()
     print()
@@ -69,7 +74,7 @@ Traceback (most recent call last):
 requests.exceptions.JSONDecodeError: Extra data: line 1 column 5 (char 4)
 
 """
-def get_trades():
+def get_trades_running():
     lnm = ln.connect_trades()
     trade_info = lnm.futures_get_positions({
     'type': 'running'
@@ -81,6 +86,10 @@ def get_trades():
     #print(df_trades)
     df_trades["creation_date"] = pd.to_datetime(df_trades["creation_ts"]/1000 - 4*3600, unit='s').dt.strftime('%Y-%m-%d')
     df_trades["created_on"] = pd.to_datetime(df_trades["creation_ts"]/1000 - 4*3600, unit='s').dt.strftime('%Y-%m-%d %H:%M:%S.%f')
+    df_trades["total_fees"] = df_trades.apply(
+    lambda row: row["opening_fee"] + row["closing_fee"] + row["sum_carry_fees"] if row["type"] == "closed" else row["pl"] + row["opening_fee"]*2 + row["sum_carry_fees"],
+    axis=1
+    )
     df_trades["pl_w_fees"] = df_trades.apply(
     lambda row: row["pl"] - row["opening_fee"] - row["closing_fee"] - row["sum_carry_fees"] if row["type"] == "closed" else row["pl"] - row["opening_fee"]*2 - row["sum_carry_fees"],
     axis=1
@@ -104,13 +113,34 @@ def get_trades():
     df_trades.to_json(file_path_summ)
     return df_trades
 
+def get_trades_closed():
+    lnm = ln.connect_trades()
+    trade_info = lnm.futures_get_positions({
+    'type': 'closed'
+    }, format = 'json')
+    #print(trade_info)
+    df_trades = pd.DataFrame(trade_info)
+    #print(df_trades)
+    df_trades["creation_date"] = pd.to_datetime(df_trades["creation_ts"]/1000 - 4*3600, unit='s').dt.strftime('%Y-%m-%d')
+    df_trades["closed_date"] = pd.to_datetime(df_trades["closed_ts"]/1000 - 4*3600, unit='s').dt.strftime('%Y-%m-%d')
+    df_trades["pl_w_fees"] = df_trades.apply(
+    lambda row: row["pl"] - row["opening_fee"] - row["closing_fee"] - row["sum_carry_fees"] if row["type"] == "closed" else row["pl"] - row["opening_fee"]*2 - row["sum_carry_fees"],
+    axis=1
+    )
+    df_trades["total_fees"] = df_trades.apply(
+    lambda row: row["opening_fee"] + row["closing_fee"] + row["sum_carry_fees"] if row["type"] == "closed" else row["pl"] + row["opening_fee"]*2 + row["sum_carry_fees"],
+    axis=1
+    )
+    
+    df_trades.to_json(file_path_summ_closed)
+    return df_trades
 
-def print_trades():
+def print_trades_running():
     with open(file_path_summ, 'r') as json_file:
         df_trades = pd.read_json(json_file)
     #df_trades = get_trades()
-    selected_col = df_trades[[#"id",
-                              "created_on",
+    #print(df_trades)
+    df_trades_running = df_trades[["created_on",
                               "opening_fee",
                               "closing_fee",
                               "sum_carry_fees",
@@ -125,7 +155,7 @@ def print_trades():
                               'pl_w_fees_pct',
                               'margin_call',
                               'in_profit']]
-    print(selected_col)
+    print(df_trades_running)
 
 def rec_trx(row):
     signal_rec = signal.get_main_signal_new()
@@ -145,6 +175,7 @@ def get_list_margin():
     #df_trades = get_trades()
     with open(file_path_summ, 'r') as json_file:
         df_trades = pd.read_json(json_file)
+    
     for index, row in df_trades.iterrows():
         if row['margin'] == 1:
             id_list.append(row['id'])
@@ -219,6 +250,32 @@ def last_trx():
         max_timestamp = df_trades['creation_ts'].max()
         #print(max_timestamp)
         return max_timestamp
+
+def get_closing_msg_short():
+    id_list_closing = get_list_close_short_aggro()
+    id_list_closing = ["1250b616-bb89-4dbb-8be1-3ea4411dbae1","ed3af214-f8ed-41ee-8512-64a76aa308ba"]
+    with open(file_path_summ_closed, 'r') as json_file:
+        df_trades = pd.read_json(json_file)
+    
+    
+    for index, row in df_trades.iterrows():
+        if row['id'] in id_list_closing:
+            msg = f"I just closed a short! I bought at {row['price']} with a {row['leverage']}x and I closed at {row['exit_price']}, for a pnl of {row['pl_w_fees']} (total fees = {row['total_fees']})."
+            print(msg)
+            ns.send_msg(msg)
+
+def get_closing_msg_long():
+    id_list_closing = get_list_close_short_aggro()
+    #id_list_closing = ["1250b616-bb89-4dbb-8be1-3ea4411dbae1","ed3af214-f8ed-41ee-8512-64a76aa308ba"]
+    with open(file_path_summ_closed, 'r') as json_file:
+        df_trades = pd.read_json(json_file)
+    
+    
+    for index, row in df_trades.iterrows():
+        if row['id'] in id_list_closing:
+            msg = f"I just closed a short! I bought at {row['price']} with a {row['leverage']}x and I closed at {row['exit_price']}, for a pnl of {row['pl_w_fees']} (total fees = {row['total_fees']})."
+            print(msg)
+            ns.send_msg(msg)          
 
 if __name__ == "__main__":
     main()
