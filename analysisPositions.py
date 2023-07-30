@@ -7,12 +7,19 @@ import lnmkt as ln
 import os
 import json
 import nostrTrade as ns
+import yaml
 
-total_duration = 60 * 60
-time_interval = 60
+# Load data from a YAML file
+with open("config.yml", "r") as yaml_file:
+    config_data = yaml.safe_load(yaml_file)
+
+# Access the data as a regular Python dictionary
+total_duration = config_data['total_duration']
+time_interval = config_data['time_interval']
+target = config_data['target']
+min_margin = config_data['min_margin']
+
 start_time = time.time()
-target = 0.10
-min_margin = -60/100
 
 # Get the current working directory
 current_directory = os.getcwd()

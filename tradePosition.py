@@ -4,14 +4,20 @@ import Signal_TradingView as signal
 import lnmkt as ln
 import datetime
 import pandas as pd
+import yaml
 
-add_margin_amount = 1000
-new_futures_amount = 2000
-leverage = 100
-minute_pause = 60
-minimum_balance = 100000
-maximum_trades = 45
+with open("config.yml", "r") as yaml_file:
+    config_data = yaml.safe_load(yaml_file)
 
+# Access the data as a regular Python dictionary
+add_margin_amount = config_data['add_margin_amount']
+new_futures_amount = config_data['new_futures_amount']
+leverage = config_data['leverage']
+minute_pause = config_data['minute_pause']
+minimum_balance = config_data['minimum_balance']
+maximum_trade = config_data['maximum_trades']
+sell_seq = config_data['sell_seq']
+buy_seq = config_data['buy_seq']
 
 def main():
     #open_futures()
@@ -99,14 +105,14 @@ def add_margin():
 """
 J'essaie plus agressif, j'ouvre apres 2 strong et je ferme quand ca change.
 """
-min_n_aggro = 3
+#min_n_aggro = 3
 
 def open_futures_long_aggro():
     balance = ln.check_balance()
     time_difference = get_time_diff()
     count = signal.get_long_seq()
     print("Consecutive STRONG BUY : ",count)
-    if count >= min_n_aggro and time_difference >= datetime.timedelta(minutes=minute_pause) and balance == "OK":
+    if count >= buy_seq and time_difference >= datetime.timedelta(minutes=minute_pause) and balance == "OK":
         lnm = ln.connect_write()        
         opened_future = lnm.futures_new_position({
             'type': 'm', # m for market of l for limit
@@ -115,6 +121,7 @@ def open_futures_long_aggro():
             'leverage': leverage,
         })
         print(opened_future)
+        signal.reset_seq()
 
 def open_futures_short_aggro():
     balance = ln.check_balance()
@@ -122,7 +129,7 @@ def open_futures_short_aggro():
     #nb STRONG_SELL consecutifs
     count = signal.get_short_seq()
     print("Consecutive STRONG SELL : ",count)
-    if count >= min_n_aggro and time_difference >= datetime.timedelta(minutes=minute_pause) and balance == "OK":
+    if count >= sell_seq and time_difference >= datetime.timedelta(minutes=minute_pause) and balance == "OK":
         lnm = ln.connect_write()  
         opened_future = lnm.futures_new_position({
             'type': 'm', # m for market of l for limit
@@ -131,6 +138,7 @@ def open_futures_short_aggro():
             'leverage': leverage,
         })
         #print(opened_future)
+        signal.reset_seq()
 
 def close_futures_long_aggro():
     lnm = ln.connect_write()  

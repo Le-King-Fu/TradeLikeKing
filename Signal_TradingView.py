@@ -3,6 +3,7 @@ import os
 import json
 import pandas as pd
 import datetime as dt
+import yaml
 
 # Get the current working directory
 current_directory = os.getcwd()
@@ -20,8 +21,15 @@ if not os.path.exists(output_dir):
 file_path_summ = os.path.join(output_dir, signal_current)
 file_path_summ_h = os.path.join(output_dir, signal_histo)
 
-interval_list = ['1m', '5m', '15m', '30m', '1h', '2h', '4h', '1d', '1W', '1M']
-interval_main = "5m"
+with open("config.yml", "r") as yaml_file:
+    config_data = yaml.safe_load(yaml_file)
+
+# Access the data as a regular Python dictionary
+
+total_duration = config_data['total_duration']
+time_interval = config_data['time_interval']
+interval_main = config_data['interval_main']
+interval_list = config_data['interval_list']
 
 count_long = 0
 count_short = 0
@@ -148,6 +156,9 @@ def print_histo_signal():
     #print(df_select)
     print(data)
 
+def reset_seq():
+    count_long = 0
+    count_short = 0
 
 def get_long_seq():
     global count_long

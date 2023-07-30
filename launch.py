@@ -5,9 +5,16 @@ import analysisPositions as an
 import tradePosition as trade
 import datetime
 
-total_duration = 60 * 60 * 24
-time_interval = 45
-interval_list = ['1m', '5m', '15m', '30m', '1h', '2h', '4h', '1d', '1W', '1M']
+import yaml
+
+# Load data from a YAML file
+with open("config.yml", "r") as yaml_file:
+    config_data = yaml.safe_load(yaml_file)
+
+# Access the data as a regular Python dictionary
+total_duration = config_data['total_duration']
+time_interval = config_data['time_interval']
+interval_list = config_data['interval_list']
 start_time = time.time()
 
 def main():
@@ -57,5 +64,7 @@ def main():
         signal.get_historic_signal()
         time.sleep(time_interval)    
  
+
+
 if __name__ == "__main__":
     main()

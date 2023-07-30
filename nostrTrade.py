@@ -8,19 +8,19 @@ from nostr.key import PrivateKey
 from nostr.relay_manager import RelayManager
 from nostr.event import EncryptedDirectMessage
 
-import json
-import ssl
-import time
+#import json
+#import ssl
+#import time
 import lnmkt as ln
 
-private_key="nsec1pfrgd36tpm02exj35tyvgs33kaylezalq5wdlnl8fc67jzk23ntscelxey"
-public_key="npub1wlqptz2wnddnjcs5j9v36cj9em89h5v0jhet433d7med3h6w6u8qr635pc"
+#private_key="nsec1pfrgd36tpm02exj35tyvgs33kaylezalq5wdlnl8fc67jzk23ntscelxey"
+#public_key="npub1wlqptz2wnddnjcs5j9v36cj9em89h5v0jhet433d7med3h6w6u8qr635pc"
 
 def main():
     #get_keys()
     #connect_relays()
-    send_msg()
-    print("Fin")
+    #send_msg()
+    print()
 
 def get_keys():
     private_key = PrivateKey()
@@ -29,10 +29,12 @@ def get_keys():
     print(public_key)
     print(f"Private key: {private_key.bech32()}")
     print(f"Public key: {public_key.bech32()}")
+    return private_key
 
-#faut trouver une facon de reutiliser
-def send_msg(msg):
+#faut trouver une facon de reutiliser les clés
+def send_msg(msg="Test"):
     private_key = PrivateKey()
+    #private_key_bech32 = private_key.bech32()
     relay_manager = RelayManager()
     relay_manager.add_relay("wss://nostr-pub.wellorder.net")
     relay_manager.add_relay("wss://relay.damus.io")

@@ -1,7 +1,7 @@
 from lnmarkets import rest
 from lnmarkets import websockets
 import requests
-import logging
+import yaml
 import os
 import json
 import pandas as pd
@@ -26,8 +26,13 @@ file_path_summ = os.path.join(output_dir, signal_current)
 #apprendre a utiliser logging
 #logging.basicConfig(level=logging.INFO)
 
-minimum_balance = 100000
-maximum_trade = 45
+# Load data from a YAML file
+with open("config.yml", "r") as yaml_file:
+    config_data = yaml.safe_load(yaml_file)
+
+# Access the data as a regular Python dictionary
+minimum_balance = config_data['minimum_balance']
+maximum_trade = config_data['maximum_trades']
 
 def main():
     #get_info()
