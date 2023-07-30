@@ -12,6 +12,7 @@ total_duration = 60 * 60
 time_interval = 60
 start_time = time.time()
 target = 0.10
+min_margin = -60/100
 
 # Get the current working directory
 current_directory = os.getcwd()
@@ -106,7 +107,7 @@ def get_trades_running():
     #!BOGUE! La resultat de la fonction ne se mets pas a jour !
     #remplacé en splittant les 2 fct de Close
     #df_trades["rec"] = df_trades.apply(rec_trx, axis = 1)
-    df_trades["margin_call"] = df_trades.apply(lambda row: 1 if row['pl_pct'] < -90/100 else 0, axis = 1)
+    df_trades["margin_call"] = df_trades.apply(lambda row: 1 if row['pl_pct'] < min_margin else 0, axis = 1)
     df_trades["in_profit"] = df_trades.apply(lambda row: 1 if row['pl_w_fees_pct'] > target else 0, axis = 1)
     #commenté car la colonne rec ne marche pas : """ and ['rec'] == "short"""
     #print(trade_info)
@@ -141,11 +142,10 @@ def print_trades_running():
     #df_trades = get_trades()
     #print(df_trades)
     df_trades_running = df_trades[["created_on",
-                              "opening_fee",
-                              "closing_fee",
-                              "sum_carry_fees",
+                              "total_fees",
                               "side",
                               "quantity",
+                              "liquidation",
                               "price",
                               "margin",
                               "leverage",
