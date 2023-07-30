@@ -2,7 +2,7 @@ Trade Like King
 
 Version Alpha 0.0.1
 
-Disclaimer : Développeur débutant, à vos propres risques
+*Disclaimer : Développeur débutant, à vos propres risques*
 
 Cette application automatise la gestion de Futures sur la plateforme LN Market (https://lnmarkets.com/en).
 
