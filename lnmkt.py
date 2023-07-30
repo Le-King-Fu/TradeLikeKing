@@ -36,6 +36,7 @@ def main():
     #get_price_Alpha()
     #get_price_Binance()
     #get_price_LNMarket()
+    #get_npub()
     return
 
 def connect_read():
@@ -103,6 +104,14 @@ def get_nb_trx():
     #print(nb_trx_sell)
     #print(nb_trx)
     return nb_trx
+
+def get_npub():
+    with open(file_path_summ, 'r') as json_file:
+       user_info = pd.read_json(json_file)   
+    
+    npub = user_info['nostr_pubkey']["wallet"]
+    #print(npub)
+    return npub
 
 ##Alpha Avantage, les prix laguent un peu
 def get_price_Alpha():
