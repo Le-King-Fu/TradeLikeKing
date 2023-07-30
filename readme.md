@@ -8,15 +8,17 @@ Cette application automatise la gestion de Futures sur la plateforme LN Market (
 
 Pré-requis:
 
-    Portefeuille bitcoin (lightning network)
+- Portefeuille bitcoin/lightning
+    - Pour fournir de la liquidité
+    - Personnellement, j'utilise Phoenix wallet
 
-        Personnellement, j'utilise Phoenix wallet
+- Compte sur LN Market
+    - Connexion possible avec wallet lightning
+    - Aucune autre information demandée (non-KYC)
+    - Vous allez avoir besoin des clés API
 
-    Compte sur LN Market
-
-        Connexion possible avec wallet lightning, aucune autre information demandée (non-KYC) Vous allez avoir besoin des clés API
-
-Cette application tire son information de Trading Views, qui offrent des signaux (STRONG SELL, SELL, BUY, STRONG BUY) en fonction de nombreux critères et selon plusieurs intervalles temporelles.
+Cette application tire son information de Trading Views,
+qui offrent des signaux (STRONG SELL, SELL, BUY, STRONG BUY) en fonction de nombreux critères et selon plusieurs intervalles temporelles.
 https://www.tradingview.com/symbols/XBTUSD.P/technicals/
 
 De façon très simplifiée, à chaque 45 secondes, l'application
