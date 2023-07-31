@@ -94,16 +94,17 @@ def get_trades_running():
     #print(df_trades)
     df_trades["creation_date"] = pd.to_datetime(df_trades["creation_ts"]/1000 - 4*3600, unit='s').dt.strftime('%Y-%m-%d')
     df_trades["created_on"] = pd.to_datetime(df_trades["creation_ts"]/1000 - 4*3600, unit='s').dt.strftime('%Y-%m-%d %H:%M:%S.%f')
-    df_trades["total_fees"] = df_trades.apply(
-    lambda row: row["opening_fee"] + row["closing_fee"] + row["sum_carry_fees"] if row["type"] == "closed" else row["pl"] + row["opening_fee"]*2 + row["sum_carry_fees"],
+    #estimation : opening fee = closing
+    df_trades["total_fees_est"] = df_trades.apply(
+    lambda row: row["opening_fee"]*2 + row["sum_carry_fees"],
     axis=1
     )
-    df_trades["pl_w_fees"] = df_trades.apply(
-    lambda row: row["pl"] - row["opening_fee"] - row["closing_fee"] - row["sum_carry_fees"] if row["type"] == "closed" else row["pl"] - row["opening_fee"]*2 - row["sum_carry_fees"],
+    df_trades["pl_w_fees_est"] = df_trades.apply(
+    lambda row: row["pl"] - row["opening_fee"]*2 - row["sum_carry_fees"],
     axis=1
     )
     df_trades["pl_w_fees_pct"] = df_trades.apply(
-    lambda row: row["pl_w_fees"] / row["margin"],
+    lambda row: row["pl_w_fees_est"] / row["margin"],
     axis=1
     )
     df_trades["pl_pct"] = df_trades.apply(
@@ -117,7 +118,7 @@ def get_trades_running():
     df_trades["margin_call"] = df_trades.apply(lambda row: 1 if row['pl_pct'] < min_margin else 0, axis = 1)
     df_trades["in_profit"] = df_trades.apply(lambda row: 1 if row['pl_w_fees_pct'] > target else 0, axis = 1)
     #commenté car la colonne rec ne marche pas : """ and ['rec'] == "short"""
-    #print(trade_info)
+    print(trade_info)
     df_trades.to_json(file_path_summ)
     return df_trades
 
@@ -136,7 +137,7 @@ def get_trades_closed():
     axis=1
     )
     df_trades["total_fees"] = df_trades.apply(
-    lambda row: row["opening_fee"] + row["closing_fee"] + row["sum_carry_fees"] if row["type"] == "closed" else row["pl"] + row["opening_fee"]*2 + row["sum_carry_fees"],
+    lambda row: row["opening_fee"] + row["closing_fee"] + row["sum_carry_fees"],
     axis=1
     )
     
@@ -149,7 +150,7 @@ def print_trades_running():
     #df_trades = get_trades()
     #print(df_trades)
     df_trades_running = df_trades[["created_on",
-                              "total_fees",
+                              "total_fees_est",
                               "side",
                               "quantity",
                               "liquidation",
@@ -158,7 +159,7 @@ def print_trades_running():
                               "leverage",
                               "pl",
                               "pl_pct",
-                              "pl_w_fees",
+                              "pl_w_fees_est",
                               'pl_w_fees_pct',
                               'margin_call',
                               'in_profit']]
