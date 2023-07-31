@@ -270,10 +270,10 @@ def get_closing_msg_short():
         if row['id'] in id_list_closing:
             msg = f"I just closed a short! I bought at {row['price']} with a {row['leverage']}x and I closed at {row['exit_price']}, for a pnl of {row['pl_w_fees']} (total fees = {row['total_fees']})."
             print(msg)
-            ns.send_msg(msg)
+            #ns.send_msg(msg)
 
 def get_closing_msg_long():
-    id_list_closing = get_list_close_short_aggro()
+    id_list_closing = get_list_close_long_aggro()
     #id_list_closing = ["1250b616-bb89-4dbb-8be1-3ea4411dbae1","ed3af214-f8ed-41ee-8512-64a76aa308ba"]
     with open(file_path_summ_closed, 'r') as json_file:
         df_trades = pd.read_json(json_file)
@@ -281,9 +281,9 @@ def get_closing_msg_long():
     
     for index, row in df_trades.iterrows():
         if row['id'] in id_list_closing:
-            msg = f"I just closed a short! I bought at {row['price']} with a {row['leverage']}x and I closed at {row['exit_price']}, for a pnl of {row['pl_w_fees']} (total fees = {row['total_fees']})."
+            msg = f"I just closed a long! I bought at {row['price']} with a {row['leverage']}x and I closed at {row['exit_price']}, for a pnl of {row['pl_w_fees']} (total fees = {row['total_fees']})."
             print(msg)
-            ns.send_msg(msg)          
+            #ns.send_msg(msg)          
 
 if __name__ == "__main__":
     main()
