@@ -157,6 +157,8 @@ def print_histo_signal():
     print(data)
 
 def reset_seq():
+    global count_short
+    global count_long
     count_long = 0
     count_short = 0
 
