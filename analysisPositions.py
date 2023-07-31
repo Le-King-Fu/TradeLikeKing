@@ -118,7 +118,7 @@ def get_trades_running():
     df_trades["margin_call"] = df_trades.apply(lambda row: 1 if row['pl_pct'] < min_margin else 0, axis = 1)
     df_trades["in_profit"] = df_trades.apply(lambda row: 1 if row['pl_w_fees_pct'] > target else 0, axis = 1)
     #commenté car la colonne rec ne marche pas : """ and ['rec'] == "short"""
-    print(trade_info)
+    #print(trade_info)
     df_trades.to_json(file_path_summ)
     return df_trades
 
