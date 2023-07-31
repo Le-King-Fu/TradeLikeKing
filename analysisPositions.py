@@ -185,7 +185,7 @@ def get_list_margin():
         df_trades = pd.read_json(json_file)
     
     for index, row in df_trades.iterrows():
-        if row['margin'] == 1:
+        if row['margin_call'] == 1:
             id_list.append(row['id'])
     #print("Margin call: ",id_list)
     return id_list
