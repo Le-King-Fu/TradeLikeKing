@@ -271,6 +271,7 @@ def get_closing_msg_short():
         if row['id'] in id_list_closing:
             msg = f"I just closed a short! I bought at {row['price']} with a {row['leverage']}x and I closed at {row['exit_price']}, for a pnl of {row['pl_w_fees']} (total fees = {row['total_fees']})."
             print(msg)
+            return msg
             #ns.send_msg(msg)
 
 def get_closing_msg_long():
@@ -284,7 +285,8 @@ def get_closing_msg_long():
         if row['id'] in id_list_closing:
             msg = f"I just closed a long! I bought at {row['price']} with a {row['leverage']}x and I closed at {row['exit_price']}, for a pnl of {row['pl_w_fees']} (total fees = {row['total_fees']})."
             print(msg)
-            #ns.send_msg(msg)          
+            #ns.send_msg(msg)   
+            return msg       
 
 if __name__ == "__main__":
     main()

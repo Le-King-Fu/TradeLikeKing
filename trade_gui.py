@@ -1,14 +1,14 @@
-import tkinter as tk
-import launch
 import analysisPositions as an
-from tkinter import filedialog
+import Signal_TradingView as si
+import tradePosition as tr
+import lnmkt as ln
+
+import tkinter as tk
 import os
 import datetime as dt
-import lnmkt as ln
 import yaml
-import Signal_TradingView as si
 import pandas as pd
-import json
+
 
 
 current_directory = os.getcwd()
@@ -49,10 +49,8 @@ def toggle_status():
         start_button.grid_remove()  # Hide the "Start Program" button
         stop_button.grid()  # Show the "Stop Program" button
         start_program()
-        show_price()
-        #si.get_all_signal(interval_list)
-        #show_signal()
-        show_trades()
+
+        #signal.get_historic_signal()
 
 def start_program():
     #is_running.set(True)
@@ -60,6 +58,28 @@ def start_program():
     start_time = dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     start_str = start_time + " - Let's gooooooo!\n"
     log_text_main.insert(tk.END, start_str)  # Insert DataFrame string into Text widget
+    show_price()
+    #show_signal()
+    show_consecutive_signal()
+    tr.open_futures_long_aggro()
+    tr.open_futures_short_aggro()
+    ln.get_info()
+    if ln.get_nb_trx() == 0:
+        print("No transaction")
+        print()
+    else: 
+        show_trades()
+        show_margin()
+        tr.add_margin()
+        show_closing_id()
+        tr.close_futures_short_aggro()
+        tr.close_futures_long_aggro()
+        an.get_trades_closed()
+        an.get_closing_msg_long()
+        an.get_closing_msg_long()
+        if show_closing_msg is not None:
+            show_closing_msg()
+
     #si.get_all_signal(interval_list)
     #an.get_trades_running()
     #show_trades()
@@ -79,13 +99,43 @@ def show_signal():
         #return data_col
     
     data_str = data_col.to_string(index=False)
-    log_text_main.insert(tk.END,"\n SIGNAUX \n" + data_str)
+    log_text_main.insert(tk.END,"\nSIGNAUX \n" + data_str)
 
 def show_trades():
     an.get_trades_running()
     data_col = an.print_trades_running()
     data_str = data_col.to_string(index=False)
-    log_text_main.insert(tk.END,"\n \n TRADES SUMMARY \n" + data_str)
+    log_text_main.insert(tk.END,"\n \nTRADES SUMMARY \n" + data_str)
+
+def show_margin():
+    data = str(an.get_list_margin())
+    #data_col = an.print_trades_running()
+    #data_str = data_col.to_string(index=False)
+    log_text_main.insert(tk.END,"\n \n Margin call : " + data)
+
+def show_closing_id():
+    close_long = str(an.get_list_close_long_aggro())
+    close_short = str(an.get_list_close_short_aggro())
+    log_text_main.insert(tk.END,"\n \nClosing time ! \n Long : " + close_long + "\n Short : " + close_short)
+
+def show_closing_msg():
+    msg_long = str(an.get_closing_msg_long())
+    msg_short = str(an.get_closing_msg_short())
+    if msg_long is not None:
+        log_text_main.insert(tk.END,"\n \n " + msg_long)
+        return msg_long
+    elif msg_short is not None:
+        log_text_main.insert(tk.END,"\n \n " + msg_short)
+        return msg_short
+    else:
+        log_text_main.insert(tk.END,"\n \nNo closing this time...")
+
+def show_consecutive_signal():
+    count_sh = str(si.get_short_seq())
+    count_lg = str(si.get_long_seq())
+    log_text_main.insert(tk.END,"\nConsecutive STRONG SELL : " + count_sh + "\nConsecutive STRONG BUY : " + count_lg)
+
+
 
 def stop_program():
     #is_running.set(False)

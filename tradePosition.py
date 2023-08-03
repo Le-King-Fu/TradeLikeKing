@@ -137,7 +137,7 @@ def open_futures_short_aggro():
             'margin': new_futures_amount,
             'leverage': leverage,
         })
-        #print(opened_future)
+        print(opened_future)
         signal.reset_seq()
 
 def close_futures_long_aggro():
