@@ -164,6 +164,7 @@ def print_trades_running():
                               'margin_call',
                               'in_profit']]
     print(df_trades_running)
+    return df_trades_running
 
 def rec_trx(row):
     signal_rec = signal.get_main_signal_new()

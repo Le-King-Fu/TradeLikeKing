@@ -13,15 +13,17 @@ import json
 
 current_directory = os.getcwd()
 current_dir = os.path.join(current_directory,)
-output_dir = os.path.join(current_directory,'output')
+output_dir = os.path.join(current_directory,'output_data')
 
 config = 'config.yml'
 signal_current = 'signal_current.json'
+trade_summary = 'trade_summary.json'
 
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 file_path_config = os.path.join(current_dir, config)
 file_path_signal = os.path.join(output_dir, signal_current)
+file_path_trades = os.path.join(output_dir, signal_current)
 
 with open("config.yml", "r") as yaml_file:
     config_data = yaml.safe_load(yaml_file)
@@ -49,9 +51,8 @@ def toggle_status():
         start_program()
         show_price()
         #si.get_all_signal(interval_list)
-        show_signal()
-
-
+        #show_signal()
+        show_trades()
 
 def start_program():
     #is_running.set(True)
@@ -60,7 +61,8 @@ def start_program():
     start_str = start_time + " - Let's gooooooo!\n"
     log_text_main.insert(tk.END, start_str)  # Insert DataFrame string into Text widget
     #si.get_all_signal(interval_list)
-    an.get_trades_running()
+    #an.get_trades_running()
+    #show_trades()
 
 
 def show_price():
@@ -77,10 +79,13 @@ def show_signal():
         #return data_col
     
     data_str = data_col.to_string(index=False)
-    log_text_main.insert(tk.END, data_str)
+    log_text_main.insert(tk.END,"\n SIGNAUX \n" + data_str)
 
-
-
+def show_trades():
+    an.get_trades_running()
+    data_col = an.print_trades_running()
+    data_str = data_col.to_string(index=False)
+    log_text_main.insert(tk.END,"\n \n TRADES SUMMARY \n" + data_str)
 
 def stop_program():
     #is_running.set(False)
@@ -147,20 +152,20 @@ if __name__ == "__main__":
     root.title("Program Status and Log")
 
     # Add the big green button to start the program
-    start_button = tk.Button(root, text="Start Program", bg="green", fg="white", font=("Helvetica", 16), command=toggle_status)
+    start_button = tk.Button(root, text="Start Program", bg="green", fg="white", font=("Helvetica", 16, "bold"), command=toggle_status)
     #start_button.pack(pady=20)
     start_button.grid(row=0, column=0, padx=20, pady=20)
 
     # Add the medium stylish red X button to stop the program
-    stop_button = tk.Button(root, text="STOP", bg="red", fg="white", font=("Helvetica", 18, "bold"), width=5, height=2, command=toggle_status)
+    stop_button = tk.Button(root, text="STOP", bg="red", fg="white", font=("Helvetica", 16), command=toggle_status)
     #stop_button.pack()
     stop_button.grid(row=0, column=0, padx=20, pady=20)
 
-    status_label = tk.Label(root, text="Not Running", fg="red")
-    status_label.grid(row=1, column=0, padx=20, pady=20)
+    status_label = tk.Label(root, text="Not Running", fg="red", bg="black",font=("Helvetica", 16))
+    status_label.grid(row=0, column=1, padx=20, pady=20)
 
-    log_text_main = tk.Text(root, wrap=tk.WORD, width=50, height=10)
-    log_text_main.grid(row=2, column=0, padx=20, pady=20)
+    log_text_main = tk.Text(root, wrap=tk.WORD, width=200, height=30)
+    log_text_main.grid(row=2, column=0, padx=20, pady=20,columnspan=2)
 
     open_config_button = tk.Button(root, text="Open Config", command=open_config_file)
     #open_config_button.pack()
