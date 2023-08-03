@@ -86,6 +86,7 @@ def get_price_LNMarket():
     bitcoin_price = float(data['lastPrice'])
     bitcoin_price_formatted = "{:.2f}".format(bitcoin_price)
     print("LN Market : "+ bitcoin_price_formatted)
+    return "LN Market : "+ bitcoin_price_formatted
 
 def check_balance():
     with open(file_path_summ, 'r') as json_file:
@@ -136,8 +137,10 @@ def get_price_Binance():
         bitcoin_price = float(data['price'])
         bitcoin_price_formatted = "{:.2f}".format(bitcoin_price)
         print("Binance : "+ bitcoin_price_formatted)
+        return "Binance : "+ bitcoin_price_formatted
     else:
         print('Erreur API Binance')
-        
+        return "Erreur API Binance"
+
 if __name__ == "__main__":
     main()

@@ -112,6 +112,7 @@ def get_main_signal():
 #https://www.tradingview.com/charting-library-docs/latest/api/interfaces/
 # Get trading signal from trading view https://www.tradingview.com/symbols/XBTUSD/technicals/
 #Doc pour API : https://python-tradingview-ta.readthedocs.io/en/latest/
+#plus d'infos sur signaux :https://academy.binance.com/en/articles/5-essential-indicators-used-in-technical-analysis
 def get_ta(symbol, screener, exchange, interval):
     ta_interval_list = [Interval.INTERVAL_1_MINUTE,
                         Interval.INTERVAL_5_MINUTES,
