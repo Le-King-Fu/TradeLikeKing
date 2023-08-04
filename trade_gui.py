@@ -8,6 +8,7 @@ import os
 import datetime as dt
 import yaml
 import pandas as pd
+import time
 
 
 
@@ -32,7 +33,7 @@ total_duration = config_data['total_duration']
 time_interval = config_data['time_interval']
 interval_main = config_data['interval_main']
 interval_list = config_data['interval_list']
-
+#start_time = time.time()
 
 is_running = False
 
@@ -52,38 +53,57 @@ def toggle_status():
 
         #signal.get_historic_signal()
 
-def start_program():
-    #is_running.set(True)
-    status_label.config(text="Running", fg="green")
-    start_time = dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    start_str = start_time + " - Let's gooooooo!\n"
-    log_text_main.insert(tk.END, start_str)  # Insert DataFrame string into Text widget
-    show_price()
-    #show_signal()
-    show_consecutive_signal()
-    tr.open_futures_long_aggro()
-    tr.open_futures_short_aggro()
-    ln.get_info()
-    if ln.get_nb_trx() == 0:
-        print("No transaction")
-        print()
-    else: 
-        show_trades()
-        show_margin()
-        tr.add_margin()
-        show_closing_id()
-        tr.close_futures_short_aggro()
-        tr.close_futures_long_aggro()
-        an.get_trades_closed()
-        an.get_closing_msg_long()
-        an.get_closing_msg_long()
-        if show_closing_msg is not None:
-            show_closing_msg()
+def start_program(counter=0):
+    if not is_running:
+        return  # Stop the loop if is_running is set to False
+    if counter <= total_duration:  # Stop after 24 hours (86,400 seconds)    
+    #while time.time() - start_time < total_duration:
+        #is_running.set(True)
+        status_label.config(text="Running", fg="green")
+        log_text_main.delete('1.0', tk.END)
+        start_time = dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        start_str = start_time + " - Let's gooooooo!\n"
+        log_text_main.see(tk.END)
+        log_text_main.insert(tk.END, start_str)  # Insert DataFrame string into Text widget
+        show_price()
+        log_text_main.update_idletasks()
+        log_text_main.see(tk.END)
+        #show_signal()
+        log_text_main.update_idletasks()
+        log_text_main.see(tk.END)
+        show_consecutive_signal()
+        tr.open_futures_long_aggro()
+        tr.open_futures_short_aggro()
+        ln.get_info()
+        if ln.get_nb_trx() == 0:
+            print("No transaction")
+            print()
+        else: 
+            show_trades()
+            log_text_main.update_idletasks()
+            log_text_main.see(tk.END)
+            show_margin()
+            tr.add_margin()
+            log_text_main.update_idletasks()
+            log_text_main.see(tk.END)
+            show_closing_id()
+            log_text_main.update_idletasks()
+            log_text_main.see(tk.END)
+            tr.close_futures_short_aggro()
+            tr.close_futures_long_aggro()
+            an.get_trades_closed()
+            an.get_closing_msg_long()
+            an.get_closing_msg_long()
+            log_text_main.update_idletasks()
+            log_text_main.see(tk.END)
+            #if show_closing_msg is not None:
+                #show_closing_msg()
 
-    #si.get_all_signal(interval_list)
-    #an.get_trades_running()
-    #show_trades()
-
+        #si.get_all_signal(interval_list)
+        #an.get_trades_running()
+        #show_trades()
+        #time.sleep(time_interval)    
+        repeat_id = root.after(5000, start_program, counter + 10)
 
 def show_price():
     log_text_main.insert(tk.END, ln.get_price_LNMarket() + "\n")  # Insert DataFrame string into Text widget
@@ -111,7 +131,7 @@ def show_margin():
     data = str(an.get_list_margin())
     #data_col = an.print_trades_running()
     #data_str = data_col.to_string(index=False)
-    log_text_main.insert(tk.END,"\n \n Margin call : " + data)
+    log_text_main.insert(tk.END,"\n \nMargin call : " + data)
 
 def show_closing_id():
     close_long = str(an.get_list_close_long_aggro())
@@ -135,14 +155,17 @@ def show_consecutive_signal():
     count_lg = str(si.get_long_seq())
     log_text_main.insert(tk.END,"\nConsecutive STRONG SELL : " + count_sh + "\nConsecutive STRONG BUY : " + count_lg)
 
-
-
 def stop_program():
     #is_running.set(False)
     status_label.config(text="Not Running", fg="red")
     log_text_main.delete('1.0', tk.END)
     #toggle_button.config(text="Show trades")
     #log_text.insert(tk.END, "Program Stopped\n")
+    #cancel_program()
+    
+
+#def cancel_program():
+#    root.after_cancel(repeat_id)  # Cancel the scheduled loop
 
 def show_dataframe():
     df_trades = an.print_trades_running()
@@ -170,7 +193,7 @@ def show_config_window(config_data):
     config_window.title("Config File")
 
     # Create a Text widget to display the config data
-    config_text = tk.Text(config_window, wrap="word", width=80, height=20)
+    config_text = tk.Text(config_window, wrap="word", width=80, height=25)
     config_text.grid(row=0, column=0, padx=10, pady=10)
     config_text.insert(tk.END, config_data)
 
@@ -194,13 +217,21 @@ def show_config_window(config_data):
     cancel_button.grid(row=2, column=0, padx=10, pady=10)
 
 
+
 #def on_close():
 #    root.destroy()
 
 if __name__ == "__main__":
     root = tk.Tk()
     root.title("Program Status and Log")
+    bitcoin_orange = "#F7931A"
+    main_bg_color = "white"
+    #repeat_id = 0
+    def set_background_color(widget, color):
+        widget.configure(bg=color)
 
+    # Set the main background color of the root window
+    set_background_color(root, bitcoin_orange)
     # Add the big green button to start the program
     start_button = tk.Button(root, text="Start Program", bg="green", fg="white", font=("Helvetica", 16, "bold"), command=toggle_status)
     #start_button.pack(pady=20)
@@ -214,7 +245,7 @@ if __name__ == "__main__":
     status_label = tk.Label(root, text="Not Running", fg="red", bg="black",font=("Helvetica", 16))
     status_label.grid(row=0, column=1, padx=20, pady=20)
 
-    log_text_main = tk.Text(root, wrap=tk.WORD, width=200, height=30)
+    log_text_main = tk.Text(root, wrap=tk.WORD, width=200, height=30, bg="black", fg="white")
     log_text_main.grid(row=2, column=0, padx=20, pady=20,columnspan=2)
 
     open_config_button = tk.Button(root, text="Open Config", command=open_config_file)
