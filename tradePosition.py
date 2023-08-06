@@ -111,8 +111,9 @@ def open_futures_long_aggro():
     balance = ln.check_balance()
     time_difference = get_time_diff()
     count = signal.get_long_seq()
+    nb_trx = ln.get_nb_trx()
     print("Consecutive STRONG BUY : ",count)
-    if count >= buy_seq and time_difference >= datetime.timedelta(minutes=minute_pause) and balance == "OK":
+    if count >= buy_seq and time_difference >= datetime.timedelta(minutes=minute_pause) and balance == "OK" and nb_trx < maximum_trade:
         lnm = ln.connect_write()        
         opened_future = lnm.futures_new_position({
             'type': 'm', # m for market of l for limit
@@ -129,7 +130,8 @@ def open_futures_short_aggro():
     #nb STRONG_SELL consecutifs
     count = signal.get_short_seq()
     print("Consecutive STRONG SELL : ",count)
-    if count >= sell_seq and time_difference >= datetime.timedelta(minutes=minute_pause) and balance == "OK":
+    nb_trx = ln.get_nb_trx()
+    if count >= sell_seq and time_difference >= datetime.timedelta(minutes=minute_pause) and balance == "OK" and nb_trx < maximum_trade:
         lnm = ln.connect_write()  
         opened_future = lnm.futures_new_position({
             'type': 'm', # m for market of l for limit
