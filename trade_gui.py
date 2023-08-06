@@ -60,11 +60,11 @@ def start_program(counter=0):
     #while time.time() - start_time < total_duration:
         #is_running.set(True)
         status_label.config(text="Running", fg="green")
-        log_text_main.delete('1.0', tk.END)
+        #log_text_main.delete('1.0', tk.END)
         start_time = dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         start_str = start_time + " - Let's gooooooo!\n"
         log_text_main.see(tk.END)
-        log_text_main.insert(tk.END, start_str)  # Insert DataFrame string into Text widget
+        log_text_main.insert(tk.END,"\n" + start_str)  # Insert DataFrame string into Text widget
         show_price()
         log_text_main.update_idletasks()
         log_text_main.see(tk.END)
@@ -102,8 +102,12 @@ def start_program(counter=0):
         #si.get_all_signal(interval_list)
         #an.get_trades_running()
         #show_trades()
-        #time.sleep(time_interval)    
-        repeat_id = root.after(5000, start_program, counter + 10)
+        #time.sleep(time_interval)
+        end_time = dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')   
+        end_str = end_time + " - Iteration done!\n"
+        log_text_main.see(tk.END)
+        log_text_main.insert(tk.END,"\n" + end_str)  # Insert DataFrame string into Text widget
+        repeat_id = root.after(time_interval*1000, start_program, counter + time_interval)
 
 def show_price():
     log_text_main.insert(tk.END, ln.get_price_LNMarket() + "\n")  # Insert DataFrame string into Text widget

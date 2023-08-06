@@ -83,44 +83,43 @@ requests.exceptions.JSONDecodeError: Extra data: line 1 column 5 (char 4)
 
 """
 def get_trades_running():
-    lnm = ln.connect_trades()
-    trade_info = lnm.futures_get_positions({
-    'type': 'running'
-    #'type': 'closed'
-    #'type': 'open' #tombe en erreur
-    }, format = 'json')
-    #print(trade_info)
-    df_trades = pd.DataFrame(trade_info)
-    #print(df_trades)
-    df_trades["creation_date"] = pd.to_datetime(df_trades["creation_ts"]/1000 - 4*3600, unit='s').dt.strftime('%Y-%m-%d')
-    df_trades["created_on"] = pd.to_datetime(df_trades["creation_ts"]/1000 - 4*3600, unit='s').dt.strftime('%Y-%m-%d %H:%M:%S.%f')
-    #estimation : opening fee = closing
-    df_trades["total_fees_est"] = df_trades.apply(
-    lambda row: row["opening_fee"]*2 + row["sum_carry_fees"],
-    axis=1
-    )
-    df_trades["pl_w_fees_est"] = df_trades.apply(
-    lambda row: row["pl"] - row["opening_fee"]*2 - row["sum_carry_fees"],
-    axis=1
-    )
-    df_trades["pl_w_fees_pct"] = df_trades.apply(
-    lambda row: row["pl_w_fees_est"] / row["margin"],
-    axis=1
-    )
-    df_trades["pl_pct"] = df_trades.apply(
-    lambda row: row["pl"] / row["margin"],
-    axis=1
-    )
-    #compare trx a la recommandation selon interval main
-    #!BOGUE! La resultat de la fonction ne se mets pas a jour !
-    #remplacé en splittant les 2 fct de Close
-    #df_trades["rec"] = df_trades.apply(rec_trx, axis = 1)
-    df_trades["margin_call"] = df_trades.apply(lambda row: 1 if row['pl_pct'] < min_margin else 0, axis = 1)
-    df_trades["in_profit"] = df_trades.apply(lambda row: 1 if row['pl_w_fees_pct'] > target else 0, axis = 1)
-    #commenté car la colonne rec ne marche pas : """ and ['rec'] == "short"""
-    #print(trade_info)
-    df_trades.to_json(file_path_summ)
-    return df_trades
+    while True:
+        try:
+            lnm = ln.connect_trades()
+            trade_info = lnm.futures_get_positions({
+            'type': 'running'
+            }, format = 'json')
+            #print(trade_info)
+            df_trades = pd.DataFrame(trade_info)
+            #print(df_trades)
+            df_trades["creation_date"] = pd.to_datetime(df_trades["creation_ts"]/1000 - 4*3600, unit='s').dt.strftime('%Y-%m-%d')
+            df_trades["created_on"] = pd.to_datetime(df_trades["creation_ts"]/1000 - 4*3600, unit='s').dt.strftime('%Y-%m-%d %H:%M:%S.%f')
+            #estimation : opening fee = closing
+            df_trades["total_fees_est"] = df_trades.apply(
+            lambda row: row["opening_fee"]*2 + row["sum_carry_fees"],
+            axis=1
+            )
+            df_trades["pl_w_fees_est"] = df_trades.apply(
+            lambda row: row["pl"] - row["opening_fee"]*2 - row["sum_carry_fees"],
+            axis=1
+            )
+            df_trades["pl_w_fees_pct"] = df_trades.apply(
+            lambda row: row["pl_w_fees_est"] / row["margin"],
+            axis=1
+            )
+            df_trades["pl_pct"] = df_trades.apply(
+            lambda row: row["pl"] / row["margin"],
+            axis=1
+            )
+            df_trades["margin_call"] = df_trades.apply(lambda row: 1 if row['pl_pct'] < min_margin else 0, axis = 1)
+            df_trades["in_profit"] = df_trades.apply(lambda row: 1 if row['pl_w_fees_pct'] > target else 0, axis = 1)
+            #commenté car la colonne rec ne marche pas : """ and ['rec'] == "short"""
+            #print(trade_info)
+            df_trades.to_json(file_path_summ)
+            return df_trades
+        except Exception as e:
+            print(f"Error : {e}")
+            print("Try again next loop")
 
 def get_trades_closed():
     lnm = ln.connect_trades()
