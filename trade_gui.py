@@ -68,7 +68,7 @@ def start_program(counter=0):
         show_price()
         log_text_main.update_idletasks()
         log_text_main.see(tk.END)
-        #show_signal()
+        show_signal()
         log_text_main.update_idletasks()
         log_text_main.see(tk.END)
         show_consecutive_signal()
