@@ -47,6 +47,7 @@ def main():
     #get_closing_msg_short()
     #get_trades_json()
     #print_trades()
+    #get_fees()
     print()
     #return       
 
@@ -123,6 +124,7 @@ def get_trades_running():
 
 def get_trades_closed():
     lnm = ln.connect_trades()
+    #API limite a 100, voir comment contourner
     trade_info = lnm.futures_get_positions({
     'type': 'closed'
     }, format = 'json')
@@ -285,7 +287,59 @@ def get_closing_msg_long():
             msg = f"I just closed a long! I bought at {row['price']} with a {row['leverage']}x and I closed at {row['exit_price']}, for a pnl of {row['pl_w_fees']} (total fees = {row['total_fees']})."
             print(msg)
             #ns.send_msg(msg)   
-            return msg       
+            return msg
+
+def get_fees():
+    with open(file_path_summ_closed, 'r') as json_file:
+        df_trades = pd.read_json(json_file)
+        # Calculate the total fees for day trading trades
+    total_opening_fee = df_trades['opening_fee'].sum()
+    total_closing_fee = df_trades['closing_fee'].sum()
+    total_carry_fee = df_trades['sum_carry_fees'].sum()
+    #print(total_opening_fee)
+    #print(total_closing_fee)
+    #print(total_carry_fee)
+    total_fee = total_opening_fee + total_opening_fee + total_carry_fee
+    print(total_fee)
+
+    # Calculate the average fees per trade
+    #average_fees_per_trade = df_trades['fees'].mean()
+    average_opening_fee = df_trades['opening_fee'].mean()
+    average_closing_fee = df_trades['closing_fee'].mean()
+    average_carry_fee = df_trades['sum_carry_fees'].mean()
+    total_average_fee = average_opening_fee + average_closing_fee + average_carry_fee
+
+    # Calculate the highest fee amount in a single trade
+    #highest_fee = df_trades['fees'].max()
+    max_opening_fee = df_trades['opening_fee'].max()
+    max_closing_fee = df_trades['closing_fee'].max()
+    max_carry_fee = df_trades['sum_carry_fees'].max()
+
+    # Calculate the lowest fee amount in a single trade
+    #lowest_fee = df_trades['fees'].min()
+    min_opening_fee = df_trades['opening_fee'].min()
+    min_closing_fee = df_trades['closing_fee'].min()
+    min_carry_fee = df_trades['sum_carry_fees'].min()
+
+    # Calculate the number of day trading trades
+    #num_day_trades = len(df_trades)
+    results = {
+    'total_opening_fee': total_opening_fee,
+    'total_closing_fee': total_closing_fee,
+    'total_carry_fee': total_carry_fee,
+    "total_fee" : total_fee,
+    'average_opening_fee': average_opening_fee,
+    'average_closing_fee': average_closing_fee,
+    'average_carry_fee': average_carry_fee,
+    'total_average_fee' : total_average_fee,
+    'max_opening_fee': max_opening_fee,
+    'max_closing_fee': max_closing_fee,
+    'max_carry_fee': max_carry_fee,
+    'min_opening_fee': min_opening_fee,
+    'min_closing_fee': min_closing_fee,
+    'min_carry_fee': min_carry_fee,
+    }
+    return results
 
 if __name__ == "__main__":
     main()

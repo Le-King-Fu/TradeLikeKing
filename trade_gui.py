@@ -220,10 +220,38 @@ def show_config_window(config_data):
     cancel_button = tk.Button(config_window, text="Cancel", fg="red",command=config_window.destroy)
     cancel_button.grid(row=2, column=0, padx=10, pady=10)
 
+def open_dashboard():
+    dashboard_window = tk.Toplevel(root)
+    dashboard_window.title("Dashboard")
 
+    results = an.get_fees()
 
-#def on_close():
-#    root.destroy()
+    total_fee_label = tk.Label(dashboard_window, text=f'Total fees: {results["total_fee"]} sats')
+    total_fee_label.grid(row=0, column=0, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns   
+
+    average_fee_label = tk.Label(dashboard_window, text=f'Average fees: {results["total_average_fee"]} sats')
+    average_fee_label.grid(row=1, column=0, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns  
+
+    refresh_button = tk.Button(dashboard_window, text="Refresh", command=an.get_trades_closed)
+    refresh_button.grid(row=4, column=0, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns    
+    """
+        #num_day_trades = len(df_trades)
+    results = {
+    'total_opening_fee': total_opening_fee,
+    'total_closing_fee': total_closing_fee,
+    'total_carry_fee': total_carry_fee,
+    "total_fee" : total_fee,
+    'average_opening_fee': average_opening_fee,
+    'average_closing_fee': average_closing_fee,
+    'average_carry_fee': average_carry_fee,
+    'max_opening_fee': max_opening_fee,
+    'max_closing_fee': max_closing_fee,
+    'max_carry_fee': max_carry_fee,
+    'min_opening_fee': min_opening_fee,
+    'min_closing_fee': min_closing_fee,
+    'min_carry_fee': min_carry_fee,
+    }
+    """
 
 if __name__ == "__main__":
     root = tk.Tk()
@@ -254,7 +282,10 @@ if __name__ == "__main__":
 
     open_config_button = tk.Button(root, text="Open Config", command=open_config_file)
     #open_config_button.pack()
-    open_config_button.grid(row=3, column=0, columnspan=2, padx=20, pady=20)  # Place the button in row 0 and spans 2 columns
+    open_config_button.grid(row=3, column=0, padx=20, pady=20)  # Place the button in row 0 and spans 2 columns
+
+    dashboard_button = tk.Button(root, text="Dashboard", command=open_dashboard)
+    dashboard_button.grid(row=3, column=1, padx=20, pady=20)  # Place the button in row 0 and spans 2 columns
 
 # Set initial button states based on the value of is_running
     if is_running:
