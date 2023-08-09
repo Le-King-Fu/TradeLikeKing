@@ -79,14 +79,19 @@ def get_info():
     #return username, balance, nb_trx
     
 def get_price_LNMarket():
-    info = connect_read()
-    #data = []
-    data = info.futures_get_ticker(format='json')
-    #print(data['lastPrice'])
-    bitcoin_price = float(data['lastPrice'])
-    bitcoin_price_formatted = "{:.2f}".format(bitcoin_price)
-    print("LN Market : "+ bitcoin_price_formatted)
-    return "LN Market : "+ bitcoin_price_formatted
+    while True:
+        try:
+            info = connect_read()
+            #data = []
+            data = info.futures_get_ticker(format='json')
+            #print(data['lastPrice'])
+            bitcoin_price = float(data['lastPrice'])
+            bitcoin_price_formatted = "{:.2f}".format(bitcoin_price)
+            print("LN Market : "+ bitcoin_price_formatted)
+            return "LN Market : "+ bitcoin_price_formatted
+        except Exception as e:
+            print(f"Error : {e}")
+            print("Error - Info won't be updated - Try again next loop")
 
 def check_balance():
     with open(file_path_summ, 'r') as json_file:
