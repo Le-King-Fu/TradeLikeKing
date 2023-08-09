@@ -28,6 +28,8 @@ def main():
         signal.get_all_signal(interval_list)
         print()
         signal.print_all_signal()
+        count_sh = str(signal.get_short_seq())
+        count_lg = str(signal.get_long_seq())
         signal.get_main_signal_new()
         print()
         if ln.get_nb_trx() == 0:
@@ -47,8 +49,8 @@ def main():
             trade.add_margin()
             trade.close_futures_short()
             trade.close_futures_long()
-            trade.open_futures_long()
-            trade.open_futures_short()
+            trade.open_futures_long(count_lg)
+            trade.open_futures_short(count_sh)
 
             """
             ### Version Agressive ###
@@ -58,8 +60,8 @@ def main():
             an.get_closing_msg_long()
             an.get_closing_msg_long()
  
-        trade.open_futures_long_aggro()
-        trade.open_futures_short_aggro()
+        trade.open_futures_long_aggro(count_lg)
+        trade.open_futures_short_aggro(count_sh)
         print()
         signal.get_historic_signal()
         time.sleep(time_interval)    

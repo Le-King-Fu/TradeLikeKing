@@ -54,6 +54,7 @@ def toggle_status():
         #signal.get_historic_signal()
 
 def start_program(counter=0):
+
     if not is_running:
         return  # Stop the loop if is_running is set to False
     if counter <= total_duration:  # Stop after 24 hours (86,400 seconds)    
@@ -69,11 +70,13 @@ def start_program(counter=0):
         log_text_main.update_idletasks()
         log_text_main.see(tk.END)
         show_signal()
+        count_sh = str(si.get_short_seq())
+        count_lg = str(si.get_long_seq())
         log_text_main.update_idletasks()
         log_text_main.see(tk.END)
-        show_consecutive_signal()
-        tr.open_futures_long_aggro()
-        tr.open_futures_short_aggro()
+        show_consecutive_signal(count_lg, count_sh)
+        tr.open_futures_long_aggro(count_lg)
+        tr.open_futures_short_aggro(count_sh)
         ln.get_info()
         if ln.get_nb_trx() == 0:
             print("No transaction")
@@ -107,6 +110,7 @@ def start_program(counter=0):
         end_str = end_time + " - Iteration done!\n"
         log_text_main.see(tk.END)
         log_text_main.insert(tk.END,"\n" + end_str)  # Insert DataFrame string into Text widget
+        log_text_main.update_idletasks()
         repeat_id = root.after(time_interval*1000, start_program, counter + time_interval)
 
 def show_price():
@@ -154,10 +158,10 @@ def show_closing_msg():
     else:
         log_text_main.insert(tk.END,"\n \nNo closing this time...")
 
-def show_consecutive_signal():
-    count_sh = str(si.get_short_seq())
-    count_lg = str(si.get_long_seq())
-    log_text_main.insert(tk.END,"\nConsecutive STRONG SELL : " + count_sh + "\nConsecutive STRONG BUY : " + count_lg)
+def show_consecutive_signal(count_lg, count_sh):
+    #count_sh = str(si.get_short_seq())
+    #count_lg = str(si.get_long_seq())
+    log_text_main.insert(tk.END,"\n \nConsecutive STRONG SELL : " + count_sh + "\nConsecutive STRONG BUY : " + count_lg)
 
 def stop_program():
     #is_running.set(False)
