@@ -21,15 +21,19 @@ Cette application tire son information de Trading Views,
 qui offrent des signaux (STRONG SELL, SELL, BUY, STRONG BUY) en fonction de nombreux critères et selon plusieurs intervalles temporelles.
 https://www.tradingview.com/symbols/XBTUSD.P/technicals/
 
-De façon très simplifiée, à chaque 45 secondes, l'application
+De façon très simplifiée, à chaque n secondes, l'application
 
 - Récupère les signaux de TradingViews
 - Récupère les transactions "running"
 - Ajoute de la marge si necessaire pour éviter les liquidations
-- Ouvre un Futures après 3 signaux consécutifs
-- Ferme si ROI 10% après les frais ET signaux contraires (long = sell, short = buy)
+- Ouvre un Futures après x signaux consécutifs
+- Ferme si ROI x0% après les frais ET signaux contraires (long = sell, short = buy)
 
 Tous ces critères sont appelés à changer selon les expérimentations.
+
+L'application a maintenant une interface graphique.
+On peut démarrer/arrêter l'application mais aussi ajuster les critères mentionnés plus haut.
+Un dashboard pour suivre les principaux métriques est en cours - a suivre.
 
 Si vous voulez supporter mes efforts ou aider à payer les tests en prod :
 
