@@ -6,12 +6,12 @@ import os
 import json
 import pandas as pd
 
-key_API_read = os.environ.get("key_API_read")
-key_API_write = os.environ.get("key_API_write")
-secret_API_read = os.environ.get("secret_API_read")
-secret_API_write = os.environ.get("secret_API_write")
-passphrase_API_read = os.environ.get("passphrase_API_read")
-passphrase_API_write = os.environ.get("passphrase_API_write")
+#key_API_read = os.environ.get("key_API_read")
+#key_API_write = os.environ.get("key_API_write")
+#secret_API_read = os.environ.get("secret_API_read")
+#secret_API_write = os.environ.get("secret_API_write")
+#passphrase_API_read = os.environ.get("passphrase_API_read")
+#passphrase_API_write = os.environ.get("passphrase_API_write")
 key_API_trades = os.environ.get("key_API_trades")
 secret_API_trades = os.environ.get("secret_API_trades")
 passphrase_API_trades = os.environ.get("passphrase_API_trades")
@@ -44,6 +44,7 @@ def main():
     #get_npub()
     return
 
+"""
 def connect_read():
     options = {'key': str(key_API_read),
             'secret': str(secret_API_read),
@@ -59,6 +60,7 @@ def connect_write():
                 'network' : 'mainnet'}
     lnm = rest.LNMarketsRest(**options)
     return lnm
+"""
 
 #utilisé pour avoir trades_summary
 def connect_trades():
@@ -70,7 +72,7 @@ def connect_trades():
     return lnm
 
 def get_info():
-    info = connect_read()
+    info = connect_trades()
     user_info = info.get_user(format='json')
     #print(user_info)
 
@@ -81,7 +83,7 @@ def get_info():
 def get_price_LNMarket():
     while True:
         try:
-            info = connect_read()
+            info = connect_trades()
             #data = []
             data = info.futures_get_ticker(format='json')
             #print(data['lastPrice'])

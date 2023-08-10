@@ -35,6 +35,13 @@ L'application a maintenant une interface graphique.
 On peut démarrer/arrêter l'application mais aussi ajuster les critères mentionnés plus haut.
 Un dashboard pour suivre les principaux métriques est en cours - a suivre.
 
+Pour que ça fonctionne, j'ai inscript les credentials de la clé API comme variable d'environnement de mon OS.
+Stratégie recommandée par ChatGPT, vous pouvez lui demander un coup de main.
+Les variables utilisées sont :
+- key_API_trades
+- secret_API_trades
+- passphrase_API_trades
+
 Si vous voulez supporter mes efforts ou aider à payer les tests en prod :
 
 - kingfu@lnmarkets.com

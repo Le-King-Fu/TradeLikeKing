@@ -39,6 +39,8 @@ file_path_summ_closed = os.path.join(output_dir, trade_summary_closed)
 # Export the DataFrame to the JSON file
 trades_json = ''
 
+
+
 def main():
     #get_test()
     #get_trades_running()
