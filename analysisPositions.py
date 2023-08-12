@@ -291,7 +291,7 @@ def get_closing_msg_long():
             #ns.send_msg(msg)   
             return msg
 
-def get_fees():
+def get_closed_results():
     with open(file_path_summ_closed, 'r') as json_file:
         df_trades = pd.read_json(json_file)
         # Calculate the total fees for day trading trades
@@ -328,6 +328,24 @@ def get_fees():
     total_min_fee = df_trades['total_fees'].min()
     # Calculate the number of day trading trades
     #num_day_trades = len(df_trades)
+
+    nb_trx_closed_long = len(df_trades.loc[df_trades['side']== 'b'])
+    nb_trx_closed_short = len(df_trades.loc[df_trades['side']== 's'])
+    nb_trx_closed = len(df_trades)
+    total_pnl_long = df_trades.loc[df_trades['side'] == 'b','pl'].sum()
+    total_pnl_short = df_trades.loc[df_trades['side'] == 's','pl'].sum()
+    total_pnl = df_trades['pl'].sum()
+    average_pnl_long = df_trades.loc[df_trades['side'] == 'b','pl'].mean()
+    average_pnl_short = df_trades.loc[df_trades['side'] == 's','pl'].mean() 
+    average_pnl = df_trades['pl'].mean() 
+    max_pnl_long = df_trades.loc[df_trades['side'] == 'b','pl'].max()
+    max_pnl_short = df_trades.loc[df_trades['side'] == 's','pl'].max() 
+    max_pnl = df_trades['pl'].max() 
+    min_pnl_long = df_trades.loc[df_trades['side'] == 'b','pl'].min()
+    min_pnl_short = df_trades.loc[df_trades['side'] == 's','pl'].min() 
+    min_pnl = df_trades['pl'].min()
+
+
     results = {
     'total_opening_fee': total_opening_fee,
     'total_closing_fee': total_closing_fee,
@@ -346,6 +364,20 @@ def get_fees():
     'min_carry_fee': min_carry_fee,
     'total_min_fee': total_min_fee,
     'nb_trx_closed': nb_trx_closed,
+    'nb_trx_closed_long': nb_trx_closed_long,
+    'nb_trx_closed_short': nb_trx_closed_short,
+    'total_pnl_long': total_pnl_long,
+    'total_pnl_short': total_pnl_short,
+    'total_pnl': total_pnl,
+    'average_pnl_long': average_pnl_long,
+    'average_pnl_short': average_pnl_short,
+    'average_pnl': average_pnl,
+    'max_pnl_long': max_pnl_long,
+    'max_pnl_short': max_pnl_short,
+    'max_pnl': max_pnl,
+    'min_pnl_long': min_pnl_long,
+    'min_pnl_short': min_pnl_short,
+    'min_pnl': min_pnl,
     }
     return results
 
