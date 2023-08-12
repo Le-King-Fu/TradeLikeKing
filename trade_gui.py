@@ -229,25 +229,24 @@ def open_dashboard():
     dashboard_window.title("Dashboard")
 
     results = an.get_fees()
+    nb_trx =  results['nb_trx_closed']
     total_fee = "{:.2f}".format(results["total_fee"])
     total_average_fee = "{:.2f}".format(results["total_average_fee"])
     total_max_fee = "{:.2f}".format(results["total_max_fee"])
     total_min_fee = "{:.2f}".format(results["total_min_fee"])
+    total_opening_fee = "{:.2f}".format(results["total_opening_fee"])
+    average_opening_fee = "{:.2f}".format(results["average_opening_fee"])
+    max_opening_fee = "{:.2f}".format(results["max_opening_fee"])
+    min_opening_fee = "{:.2f}".format(results["min_opening_fee"])
+    total_closing_fee = "{:.2f}".format(results["total_closing_fee"])
+    average_closing_fee = "{:.2f}".format(results["average_closing_fee"])
+    max_closing_fee = "{:.2f}".format(results["max_closing_fee"])
+    min_closing_fee = "{:.2f}".format(results["min_closing_fee"])
+    total_carry_fee = "{:.2f}".format(results["total_carry_fee"])
+    average_carry_fee = "{:.2f}".format(results["average_carry_fee"])
+    max_carry_fee = "{:.2f}".format(results["max_carry_fee"])
+    min_carry_fee = "{:.2f}".format(results["min_carry_fee"])
 
-    total_fee_label = tk.Label(dashboard_window, text=f'Total fees: {total_fee} sats', anchor='e')
-    total_fee_label.grid(row=0, column=0, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns   
-
-    average_fee_label = tk.Label(dashboard_window, text=f'Average fees: {total_average_fee} sats', anchor='e')
-    average_fee_label.grid(row=1, column=0, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns  
-
-    max_fee_label = tk.Label(dashboard_window, text=f'Max fees: {total_max_fee} sats', anchor='e')
-    max_fee_label.grid(row=2, column=0, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns  
-
-    min_fee_label = tk.Label(dashboard_window, text=f'Min fees: {total_min_fee} sats', anchor='e')
-    min_fee_label.grid(row=3, column=0, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns  
-
-    refresh_button = tk.Button(dashboard_window, text="Refresh", command=an.get_trades_closed)
-    refresh_button.grid(row=4, column=0, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns    
     """
         #num_day_trades = len(df_trades)
     results = {
@@ -266,6 +265,91 @@ def open_dashboard():
     'min_carry_fee': min_carry_fee,
     }
     """
+
+    total_fee_label = tk.Label(dashboard_window, text=f'Total fees: {total_fee} sats')
+    total_fee_label.grid(row=0, column=0, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns
+
+    total_trx_label = tk.Label(dashboard_window, text=f'Nbr de trx: {nb_trx} transactions')
+    total_trx_label.grid(row=0, column=2, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns   
+
+    title_label = tk.Label(dashboard_window, text="Summary")
+    title_label.grid(row=1, column=0, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns   
+
+    title_1_label = tk.Label(dashboard_window, text="Average")
+    title_1_label.grid(row=1, column=2, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns
+
+    title_2_label = tk.Label(dashboard_window, text="Max")
+    title_2_label.grid(row=1, column=3, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns
+
+    title_3_label = tk.Label(dashboard_window, text="Min")
+    title_3_label.grid(row=1, column=4, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns
+
+    title_4_label = tk.Label(dashboard_window, text="Total")
+    title_4_label.grid(row=1, column=5, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns
+
+    line_1_label = tk.Label(dashboard_window, text="Total fees")
+    line_1_label.grid(row=2, column=0, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns  
+
+    average_fee_label = tk.Label(dashboard_window, text=total_average_fee)
+    average_fee_label.grid(row=2, column=2, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns  
+
+    max_fee_label = tk.Label(dashboard_window, text=total_max_fee)
+    max_fee_label.grid(row=2, column=3, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns  
+
+    min_fee_label = tk.Label(dashboard_window, text=total_min_fee)
+    min_fee_label.grid(row=2, column=4, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns
+
+    total_fee_label2 = tk.Label(dashboard_window, text=total_fee)
+    total_fee_label2.grid(row=2, column=5, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns     
+
+    line_2_label = tk.Label(dashboard_window, text="Opening fees")
+    line_2_label.grid(row=3, column=0, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns  
+
+    average_fee_label = tk.Label(dashboard_window, text=average_opening_fee)
+    average_fee_label.grid(row=3, column=2, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns  
+
+    max_fee_label = tk.Label(dashboard_window, text=max_opening_fee)
+    max_fee_label.grid(row=3, column=3, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns  
+
+    min_fee_label = tk.Label(dashboard_window, text=min_opening_fee)
+    min_fee_label.grid(row=3, column=4, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns
+
+    total_fee_label2 = tk.Label(dashboard_window, text=total_opening_fee)
+    total_fee_label2.grid(row=3, column=5, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns
+
+    line_3_label = tk.Label(dashboard_window, text="Closing fees")
+    line_3_label.grid(row=4, column=0, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns  
+
+    average_fee_label = tk.Label(dashboard_window, text=average_closing_fee)
+    average_fee_label.grid(row=4, column=2, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns  
+
+    max_fee_label = tk.Label(dashboard_window, text=max_closing_fee)
+    max_fee_label.grid(row=4, column=3, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns  
+
+    min_fee_label = tk.Label(dashboard_window, text=min_closing_fee)
+    min_fee_label.grid(row=4, column=4, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns
+
+    total_fee_label2 = tk.Label(dashboard_window, text=total_closing_fee)
+    total_fee_label2.grid(row=4, column=5, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns
+
+    line_3_label = tk.Label(dashboard_window, text="Carry fees")
+    line_3_label.grid(row=5, column=0, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns  
+
+    average_fee_label = tk.Label(dashboard_window, text=average_carry_fee)
+    average_fee_label.grid(row=5, column=2, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns  
+
+    max_fee_label = tk.Label(dashboard_window, text=max_carry_fee)
+    max_fee_label.grid(row=5, column=3, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns  
+
+    min_fee_label = tk.Label(dashboard_window, text=min_carry_fee)
+    min_fee_label.grid(row=5, column=4, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns
+
+    total_fee_label2 = tk.Label(dashboard_window, text=total_carry_fee)
+    total_fee_label2.grid(row=5, column=5, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns          
+
+    refresh_button = tk.Button(dashboard_window, text="Refresh", command=an.get_trades_closed)
+    refresh_button.grid(row=6, column=0, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns    
+
 
 if __name__ == "__main__":
     root = tk.Tk()

@@ -295,6 +295,7 @@ def get_fees():
     with open(file_path_summ_closed, 'r') as json_file:
         df_trades = pd.read_json(json_file)
         # Calculate the total fees for day trading trades
+    nb_trx_closed = len(df_trades)
     total_fee = df_trades['total_fees'].sum()
     total_opening_fee = df_trades['opening_fee'].sum()
     total_closing_fee = df_trades['closing_fee'].sum()
@@ -344,6 +345,7 @@ def get_fees():
     'min_closing_fee': min_closing_fee,
     'min_carry_fee': min_carry_fee,
     'total_min_fee': total_min_fee,
+    'nb_trx_closed': nb_trx_closed,
     }
     return results
 
