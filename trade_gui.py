@@ -229,12 +229,22 @@ def open_dashboard():
     dashboard_window.title("Dashboard")
 
     results = an.get_fees()
+    total_fee = "{:.2f}".format(results["total_fee"])
+    total_average_fee = "{:.2f}".format(results["total_average_fee"])
+    total_max_fee = "{:.2f}".format(results["total_max_fee"])
+    total_min_fee = "{:.2f}".format(results["total_min_fee"])
 
-    total_fee_label = tk.Label(dashboard_window, text=f'Total fees: {results["total_fee"]} sats')
+    total_fee_label = tk.Label(dashboard_window, text=f'Total fees: {total_fee} sats', anchor='e')
     total_fee_label.grid(row=0, column=0, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns   
 
-    average_fee_label = tk.Label(dashboard_window, text=f'Average fees: {results["total_average_fee"]} sats')
+    average_fee_label = tk.Label(dashboard_window, text=f'Average fees: {total_average_fee} sats', anchor='e')
     average_fee_label.grid(row=1, column=0, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns  
+
+    max_fee_label = tk.Label(dashboard_window, text=f'Max fees: {total_max_fee} sats', anchor='e')
+    max_fee_label.grid(row=2, column=0, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns  
+
+    min_fee_label = tk.Label(dashboard_window, text=f'Min fees: {total_min_fee} sats', anchor='e')
+    min_fee_label.grid(row=3, column=0, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns  
 
     refresh_button = tk.Button(dashboard_window, text="Refresh", command=an.get_trades_closed)
     refresh_button.grid(row=4, column=0, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns    
@@ -281,7 +291,7 @@ if __name__ == "__main__":
     status_label = tk.Label(root, text="Not Running", fg="red", bg="black",font=("Helvetica", 16))
     status_label.grid(row=0, column=1, padx=20, pady=20)
 
-    log_text_main = tk.Text(root, wrap=tk.WORD, width=200, height=30, bg="black", fg="white")
+    log_text_main = tk.Text(root, wrap=tk.WORD, width=200, height=40, bg="black", fg="white")
     log_text_main.grid(row=2, column=0, padx=20, pady=20,columnspan=2)
 
     open_config_button = tk.Button(root, text="Open Config", command=open_config_file)
