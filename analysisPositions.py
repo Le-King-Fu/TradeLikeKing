@@ -116,6 +116,10 @@ def get_trades_running():
             )
             df_trades["margin_call"] = df_trades.apply(lambda row: 1 if row['pl_pct'] < min_margin else 0, axis = 1)
             df_trades["in_profit"] = df_trades.apply(lambda row: 1 if row['pl_w_fees_pct'] > target else 0, axis = 1)
+            df_trades["total_fees"] = df_trades.apply(
+            lambda row: row["opening_fee"] + row["closing_fee"] + row["sum_carry_fees"],
+            axis=1
+            )
             #commenté car la colonne rec ne marche pas : """ and ['rec'] == "short"""
             #print(trade_info)
             df_trades.to_json(file_path_summ)
@@ -366,6 +370,96 @@ def get_closed_results():
     'nb_trx_closed': nb_trx_closed,
     'nb_trx_closed_long': nb_trx_closed_long,
     'nb_trx_closed_short': nb_trx_closed_short,
+    'total_pnl_long': total_pnl_long,
+    'total_pnl_short': total_pnl_short,
+    'total_pnl': total_pnl,
+    'average_pnl_long': average_pnl_long,
+    'average_pnl_short': average_pnl_short,
+    'average_pnl': average_pnl,
+    'max_pnl_long': max_pnl_long,
+    'max_pnl_short': max_pnl_short,
+    'max_pnl': max_pnl,
+    'min_pnl_long': min_pnl_long,
+    'min_pnl_short': min_pnl_short,
+    'min_pnl': min_pnl,
+    }
+    return results
+
+def get_running_results():
+    with open(file_path_summ, 'r') as json_file:
+        df_trades = pd.read_json(json_file)
+        # Calculate the total fees for day trading trades
+    nb_trx_running = len(df_trades)
+    total_fee = df_trades['total_fees'].sum()
+    total_opening_fee = df_trades['opening_fee'].sum()
+    total_closing_fee = df_trades['closing_fee'].sum()
+    total_carry_fee = df_trades['sum_carry_fees'].sum()
+    #print(total_opening_fee)
+    #print(total_closing_fee)
+    #print(total_carry_fee)
+    #total_fee = total_opening_fee + total_opening_fee + total_carry_fee
+    #print(total_fee)
+
+    # Calculate the average fees per trade
+    #average_fees_per_trade = df_trades['fees'].mean()
+    average_opening_fee = df_trades['opening_fee'].mean()
+    average_closing_fee = df_trades['closing_fee'].mean()
+    average_carry_fee = df_trades['sum_carry_fees'].mean()
+    total_average_fee = df_trades['total_fees'].mean()
+    #total_average_fee = average_opening_fee + average_closing_fee + average_carry_fee
+
+    # Calculate the highest fee amount in a single trade
+    #highest_fee = df_trades['fees'].max()
+    max_opening_fee = df_trades['opening_fee'].max()
+    max_closing_fee = df_trades['closing_fee'].max()
+    max_carry_fee = df_trades['sum_carry_fees'].max()
+    total_max_fee = df_trades['total_fees'].max()
+    # Calculate the lowest fee amount in a single trade
+    #lowest_fee = df_trades['fees'].min()
+    min_opening_fee = df_trades['opening_fee'].min()
+    min_closing_fee = df_trades['closing_fee'].min()
+    min_carry_fee = df_trades['sum_carry_fees'].min()
+    total_min_fee = df_trades['total_fees'].min()
+    # Calculate the number of day trading trades
+    #num_day_trades = len(df_trades)
+
+    nb_trx_closed_long = len(df_trades.loc[df_trades['side']== 'b'])
+    nb_trx_closed_short = len(df_trades.loc[df_trades['side']== 's'])
+    nb_trx_closed = len(df_trades)
+    total_pnl_long = df_trades.loc[df_trades['side'] == 'b','pl'].sum()
+    total_pnl_short = df_trades.loc[df_trades['side'] == 's','pl'].sum()
+    total_pnl = df_trades['pl'].sum()
+    average_pnl_long = df_trades.loc[df_trades['side'] == 'b','pl'].mean()
+    average_pnl_short = df_trades.loc[df_trades['side'] == 's','pl'].mean() 
+    average_pnl = df_trades['pl'].mean() 
+    max_pnl_long = df_trades.loc[df_trades['side'] == 'b','pl'].max()
+    max_pnl_short = df_trades.loc[df_trades['side'] == 's','pl'].max() 
+    max_pnl = df_trades['pl'].max() 
+    min_pnl_long = df_trades.loc[df_trades['side'] == 'b','pl'].min()
+    min_pnl_short = df_trades.loc[df_trades['side'] == 's','pl'].min() 
+    min_pnl = df_trades['pl'].min()
+
+
+    results = {
+    'total_opening_fee': total_opening_fee,
+    'total_closing_fee': total_closing_fee,
+    'total_carry_fee': total_carry_fee,
+    "total_fee" : total_fee,
+    'average_opening_fee': average_opening_fee,
+    'average_closing_fee': average_closing_fee,
+    'average_carry_fee': average_carry_fee,
+    'total_average_fee' : total_average_fee,
+    'max_opening_fee': max_opening_fee,
+    'max_closing_fee': max_closing_fee,
+    'max_carry_fee': max_carry_fee,
+    'total_max_fee': total_max_fee,
+    'min_opening_fee': min_opening_fee,
+    'min_closing_fee': min_closing_fee,
+    'min_carry_fee': min_carry_fee,
+    'total_min_fee': total_min_fee,
+    'nb_trx_running': nb_trx_closed,
+    'nb_trx_running_long': nb_trx_closed_long,
+    'nb_trx_running_short': nb_trx_closed_short,
     'total_pnl_long': total_pnl_long,
     'total_pnl_short': total_pnl_short,
     'total_pnl': total_pnl,
