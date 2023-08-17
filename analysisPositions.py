@@ -18,6 +18,7 @@ total_duration = config_data['total_duration']
 time_interval = config_data['time_interval']
 target = config_data['target']
 min_margin = config_data['min_margin']
+min_leverage = config_data['min_leverage']
 
 start_time = time.time()
 
@@ -116,6 +117,7 @@ def get_trades_running():
             )
             df_trades["margin_call"] = df_trades.apply(lambda row: 1 if row['pl_pct'] < min_margin else 0, axis = 1)
             df_trades["in_profit"] = df_trades.apply(lambda row: 1 if row['pl_w_fees_pct'] > target else 0, axis = 1)
+            df_trades["take_a_L"] = df_trades.apply(lambda row: 1 if row['leverage'] < min_leverage and row['pl_pct'] < min_margin else 0, axis = 1)
             df_trades["total_fees"] = df_trades.apply(
             lambda row: row["opening_fee"] + row["closing_fee"] + row["sum_carry_fees"],
             axis=1
@@ -207,6 +209,8 @@ def get_list_close_long():
     for index, row in df_trades.iterrows():
         if row['in_profit'] == 1 and row['side'] == 'b' and rec == 'STRONG_SELL':
             id_list.append(row['id'])
+        if row['take_a_L'] == 1 and row['side'] == 'b' and rec == 'STRONG_SELL':
+            id_list.append(row['id'])
     return id_list
 
 def get_list_close_short():
@@ -217,6 +221,8 @@ def get_list_close_short():
         df_trades = pd.read_json(json_file)
     for index, row in df_trades.iterrows():
         if row['in_profit'] == 1 and row['side'] == 's' and rec == 'STRONG_BUY':
+            id_list.append(row['id'])
+        elif row['take_a_L'] == 1 and row['side'] == 's' and rec == 'STRONG_BUY':
             id_list.append(row['id'])
     return id_list
 
@@ -233,9 +239,9 @@ def get_list_close_long_aggro():
         df_trades = pd.read_json(json_file)
 
     for index, row in df_trades.iterrows():
-        #on enleve control sur profit
         if row['in_profit'] == 1 and row['side'] == 'b' and rec_1m not in closeif:
-        #if row['side'] == 'b' and rec not in closeif:
+            id_list.append(row['id'])
+        elif row['take_a_L'] == 1 and row['side'] == 'b':
             id_list.append(row['id'])
     return id_list
 
@@ -248,10 +254,9 @@ def get_list_close_short_aggro():
     with open(file_path_summ, 'r') as json_file:
         df_trades = pd.read_json(json_file)
     for index, row in df_trades.iterrows():
-        #j'ai remis le profit check, mais baissé ROI = 10
-
         if row['in_profit'] == 1 and row['side'] == 's' and rec_1m not in closeif:
-        #if row['side'] == 's' and rec not in closeif:
+            id_list.append(row['id'])
+        elif row['take_a_L'] == 1 and row['side'] == 's':
             id_list.append(row['id'])
     return id_list
 
