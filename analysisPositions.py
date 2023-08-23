@@ -233,15 +233,22 @@ def get_list_close_long_aggro():
     id_list = []
     rec = signal.get_main_signal_new()
     rec_1m = signal.get_1m_signal_new()
-    closeif = ['BUY','STRONG_BUY','NEUTRAL']
+    #on enleve NEUTRAL - idealement, va permettre de collecter profit plus tôt
+    closeif = ['BUY','STRONG_BUY']
     #df_trades = get_trades()
     with open(file_path_summ, 'r') as json_file:
         df_trades = pd.read_json(json_file)
-
     for index, row in df_trades.iterrows():
+        #close initial i.e. seulement si profit and trend reversed
+        #problematique pcq ne close pas assez, et les pertes creusent leur trou
         if row['in_profit'] == 1 and row['side'] == 'b' and rec_1m not in closeif:
             id_list.append(row['id'])
+        #alternative, si leverage trop bas (a cause ajout margin), alors on close
         elif row['take_a_L'] == 1 and row['side'] == 'b':
+            id_list.append(row['id'])
+        #on essaie d'ajouter une fermeture plus agressive
+        #idealement frais perdu losing trade < gain sur winners
+        elif row['side'] == 'b' and rec_1m not in closeif:
             id_list.append(row['id'])
     return id_list
 
@@ -249,14 +256,22 @@ def get_list_close_short_aggro():
     id_list = []
     rec = signal.get_main_signal_new()
     rec_1m = signal.get_1m_signal_new()
-    closeif = ['SELL','STRONG_SELL','NEUTRAL']
+    #on enleve NEUTRAL - idealement, va permettre de collecter profit plus tôt
+    closeif = ['SELL','STRONG_SELL']
     #df_trades = get_trades()
     with open(file_path_summ, 'r') as json_file:
         df_trades = pd.read_json(json_file)
     for index, row in df_trades.iterrows():
+        #close initial i.e. seulement si profit and trend reversed
+        #problematique pcq ne close pas assez, et les pertes creusent leur trou
         if row['in_profit'] == 1 and row['side'] == 's' and rec_1m not in closeif:
             id_list.append(row['id'])
+        #alternative, si leverage trop bas (a cause ajout margin), alors on close
         elif row['take_a_L'] == 1 and row['side'] == 's':
+            id_list.append(row['id'])
+        #on essaie d'ajouter une fermeture plus agressive
+        #idealement frais perdu losing trade < gain sur winners
+        elif row['side'] == 's' and rec_1m not in closeif:
             id_list.append(row['id'])
     return id_list
 
