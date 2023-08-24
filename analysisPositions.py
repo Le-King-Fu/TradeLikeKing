@@ -19,6 +19,8 @@ time_interval = config_data['time_interval']
 target = config_data['target']
 min_margin = config_data['min_margin']
 min_leverage = config_data['min_leverage']
+nb_seq_reversal = config_data['nb_seq_reversal']
+
 
 start_time = time.time()
 
@@ -249,7 +251,7 @@ def get_list_close_long_aggro(count_sh):
             id_list.append(row['id'])
         #on essaie d'ajouter une fermeture plus agressive sur changement de tendance
         #idealement frais perdu losing trade < gain sur winners
-        elif row['side'] == 'b' and count_sh >= 2:
+        elif row['side'] == 'b' and count_sh >= nb_seq_reversal:
             id_list.append(row['id'])
     return id_list
 
@@ -273,7 +275,7 @@ def get_list_close_short_aggro(count_lg):
             id_list.append(row['id'])
         #on essaie d'ajouter une fermeture plus agressive sur changement de tendance
         #idealement frais perdu losing trade < gain sur winners
-        elif row['side'] == 's' and count_lg >= 2:
+        elif row['side'] == 's' and count_lg >= nb_seq_reversal:
             id_list.append(row['id'])
     return id_list
 

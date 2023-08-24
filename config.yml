@@ -20,6 +20,7 @@ minute_pause : 60
 minimum_balance : 100000
 maximum_trades : 45
 min_leverage : 25
+nb_seq_reversal : 2
 
 #analyse
 target : 0.10
