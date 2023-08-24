@@ -233,8 +233,9 @@ def get_list_close_long_aggro():
     id_list = []
     rec = signal.get_main_signal_new()
     rec_1m = signal.get_1m_signal_new()
-    #on enleve NEUTRAL - idealement, va permettre de collecter profit plus tôt
+    #on enleve NEUTRAL pr profit- idealement, va permettre de collecter profit plus tôt
     closeif = ['BUY','STRONG_BUY']
+    closeif_loss = ['BUY','STRONG_BUY','NEUTRAL']
     #df_trades = get_trades()
     with open(file_path_summ, 'r') as json_file:
         df_trades = pd.read_json(json_file)
@@ -248,7 +249,7 @@ def get_list_close_long_aggro():
             id_list.append(row['id'])
         #on essaie d'ajouter une fermeture plus agressive
         #idealement frais perdu losing trade < gain sur winners
-        elif row['side'] == 'b' and rec_1m not in closeif:
+        elif row['side'] == 'b' and rec_1m not in closeif_loss:
             id_list.append(row['id'])
     return id_list
 
@@ -256,8 +257,9 @@ def get_list_close_short_aggro():
     id_list = []
     rec = signal.get_main_signal_new()
     rec_1m = signal.get_1m_signal_new()
-    #on enleve NEUTRAL - idealement, va permettre de collecter profit plus tôt
+    #on enleve NEUTRAL pr profit - idealement, va permettre de collecter profit plus tôt
     closeif = ['SELL','STRONG_SELL']
+    closeif_loss = ['SELL','STRONG_SELL','NEUTRAL']
     #df_trades = get_trades()
     with open(file_path_summ, 'r') as json_file:
         df_trades = pd.read_json(json_file)
@@ -271,7 +273,7 @@ def get_list_close_short_aggro():
             id_list.append(row['id'])
         #on essaie d'ajouter une fermeture plus agressive
         #idealement frais perdu losing trade < gain sur winners
-        elif row['side'] == 's' and rec_1m not in closeif:
+        elif row['side'] == 's' and rec_1m not in closeif_loss:
             id_list.append(row['id'])
     return id_list
 
