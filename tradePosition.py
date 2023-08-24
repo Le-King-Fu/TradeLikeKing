@@ -142,20 +142,20 @@ def open_futures_short_aggro(count_sh):
         print(opened_future)
         signal.reset_seq()
 
-def close_futures_long_aggro():
+def close_futures_long_aggro(count_sh):
     lnm = ln.connect_trades()  
     id_list = []
-    id_list = an.get_list_close_long_aggro()
+    id_list = an.get_list_close_long_aggro(count_sh)
     #print(id_list)   
     for id in id_list:
         close_position = lnm.futures_close_position({'id': id})
         #print(close_position)
         #print(str(id))   
 
-def close_futures_short_aggro():
+def close_futures_short_aggro(count_lg):
     lnm = ln.connect_trades() 
     id_list = []
-    id_list = an.get_list_close_short_aggro()
+    id_list = an.get_list_close_short_aggro(count_lg)
     #print(id_list)
     for id in id_list:
         #id = str(id)

@@ -229,7 +229,7 @@ def get_list_close_short():
 #Version agressive
 #chg : éviter les closures trop rapide, check ROI a compensé par margin check et close sur signal plus rapide (1m)
 
-def get_list_close_long_aggro():
+def get_list_close_long_aggro(count_sh):
     id_list = []
     rec = signal.get_main_signal_new()
     rec_1m = signal.get_1m_signal_new()
@@ -247,13 +247,13 @@ def get_list_close_long_aggro():
         #alternative, si leverage trop bas (a cause ajout margin), alors on close
         elif row['take_a_L'] == 1 and row['side'] == 'b':
             id_list.append(row['id'])
-        #on essaie d'ajouter une fermeture plus agressive
+        #on essaie d'ajouter une fermeture plus agressive sur changement de tendance
         #idealement frais perdu losing trade < gain sur winners
-        elif row['side'] == 'b' and rec_1m not in closeif_loss:
+        elif row['side'] == 'b' and count_sh >= 2:
             id_list.append(row['id'])
     return id_list
 
-def get_list_close_short_aggro():
+def get_list_close_short_aggro(count_lg):
     id_list = []
     rec = signal.get_main_signal_new()
     rec_1m = signal.get_1m_signal_new()
@@ -271,9 +271,9 @@ def get_list_close_short_aggro():
         #alternative, si leverage trop bas (a cause ajout margin), alors on close
         elif row['take_a_L'] == 1 and row['side'] == 's':
             id_list.append(row['id'])
-        #on essaie d'ajouter une fermeture plus agressive
+        #on essaie d'ajouter une fermeture plus agressive sur changement de tendance
         #idealement frais perdu losing trade < gain sur winners
-        elif row['side'] == 's' and rec_1m not in closeif_loss:
+        elif row['side'] == 's' and count_lg >= 2:
             id_list.append(row['id'])
     return id_list
 
