@@ -19,7 +19,7 @@ time_interval = config_data['time_interval']
 target = config_data['target']
 min_margin = config_data['min_margin']
 min_leverage = config_data['min_leverage']
-nb_seq_reversal = config_data['nb_seq_reversal']
+nb_seq_reversal = int(config_data['nb_seq_reversal'])
 
 
 start_time = time.time()
@@ -233,6 +233,7 @@ def get_list_close_short():
 
 def get_list_close_long_aggro(count_sh):
     id_list = []
+    count_sh = int(count_sh)
     rec = signal.get_main_signal_new()
     rec_1m = signal.get_1m_signal_new()
     #on enleve NEUTRAL pr profit- idealement, va permettre de collecter profit plus tôt
@@ -257,6 +258,7 @@ def get_list_close_long_aggro(count_sh):
 
 def get_list_close_short_aggro(count_lg):
     id_list = []
+    count_lg = int(count_lg)
     rec = signal.get_main_signal_new()
     rec_1m = signal.get_1m_signal_new()
     #on enleve NEUTRAL pr profit - idealement, va permettre de collecter profit plus tôt

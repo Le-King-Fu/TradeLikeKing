@@ -89,14 +89,14 @@ def start_program(counter=0):
             tr.add_margin()
             log_text_main.update_idletasks()
             log_text_main.see(tk.END)
-            show_closing_id()
+            show_closing_id(count_lg, count_sh)
             log_text_main.update_idletasks()
             log_text_main.see(tk.END)
             tr.close_futures_short_aggro(count_lg)
             tr.close_futures_long_aggro(count_sh)
             an.get_trades_closed()
-            an.get_closing_msg_long()
-            an.get_closing_msg_long()
+            #an.get_closing_msg_long()
+            #an.get_closing_msg_short()
             log_text_main.update_idletasks()
             log_text_main.see(tk.END)
             #if show_closing_msg is not None:
@@ -141,9 +141,9 @@ def show_margin():
     #data_str = data_col.to_string(index=False)
     log_text_main.insert(tk.END,"\n \nMargin call : " + data)
 
-def show_closing_id():
-    close_long = str(an.get_list_close_long_aggro())
-    close_short = str(an.get_list_close_short_aggro())
+def show_closing_id(count_lg, count_sh):
+    close_long = str(an.get_list_close_long_aggro(count_sh))
+    close_short = str(an.get_list_close_short_aggro(count_lg))
     log_text_main.insert(tk.END,"\n \nClosing time ! \n Long : " + close_long + "\n Short : " + close_short)
 
 def show_closing_msg():
