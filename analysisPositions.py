@@ -20,6 +20,7 @@ target = config_data['target']
 min_margin = config_data['min_margin']
 min_leverage = config_data['min_leverage']
 nb_seq_reversal = int(config_data['nb_seq_reversal'])
+pnl_loss = config_data['pnl_loss']
 
 
 start_time = time.time()
@@ -119,7 +120,7 @@ def get_trades_running():
             )
             df_trades["margin_call"] = df_trades.apply(lambda row: 1 if row['pl_pct'] < min_margin else 0, axis = 1)
             df_trades["in_profit"] = df_trades.apply(lambda row: 1 if row['pl_w_fees_pct'] > target else 0, axis = 1)
-            df_trades["take_a_L"] = df_trades.apply(lambda row: 1 if row['leverage'] < min_leverage and row['pl_pct'] < min_margin else 0, axis = 1)
+            df_trades["take_a_L"] = df_trades.apply(lambda row: 1 if row['pl_pct'] <= pnl_loss else 0, axis = 1)
             df_trades["total_fees"] = df_trades.apply(
             lambda row: row["opening_fee"] + row["closing_fee"] + row["sum_carry_fees"],
             axis=1
@@ -248,11 +249,12 @@ def get_list_close_long_aggro(count_sh):
         if row['in_profit'] == 1 and row['side'] == 'b' and rec_1m not in closeif:
             id_list.append(row['id'])
         #alternative, si leverage trop bas (a cause ajout margin), alors on close
-        elif row['take_a_L'] == 1 and row['side'] == 'b':
-            id_list.append(row['id'])
+        #elif row['take_a_L'] == 1 and row['side'] == 'b':
+        #    id_list.append(row['id'])
         #on essaie d'ajouter une fermeture plus agressive sur changement de tendance
         #idealement frais perdu losing trade < gain sur winners
-        elif row['side'] == 'b' and count_sh >= nb_seq_reversal:
+        #trop agressif, j'ajoute une perte minimum dans take_a_L pour garder un peu en vie        
+        elif row['take_a_L'] == 1 and row['side'] == 'b' and count_sh >= nb_seq_reversal:
             id_list.append(row['id'])
     return id_list
 
@@ -272,13 +274,13 @@ def get_list_close_short_aggro(count_lg):
         #problematique pcq ne close pas assez, et les pertes creusent leur trou
         if row['in_profit'] == 1 and row['side'] == 's' and rec_1m not in closeif:
             id_list.append(row['id'])
-        #alternative, si leverage trop bas (a cause ajout margin), alors on close
-        elif row['take_a_L'] == 1 and row['side'] == 's':
-            id_list.append(row['id'])
         #on essaie d'ajouter une fermeture plus agressive sur changement de tendance
         #idealement frais perdu losing trade < gain sur winners
-        elif row['side'] == 's' and count_lg >= nb_seq_reversal:
+        #trop agressif, j'ajoute une perte minimum dans take_a_L pour garder un peu en vie
+        elif row['take_a_L'] == 1 and row['side'] == 's'and count_lg >= nb_seq_reversal:
             id_list.append(row['id'])
+
+
     return id_list
 
  ##a corriger pcq stuck sur l'ancienne trx lorsque no trx
