@@ -444,6 +444,12 @@ def open_dashboard():
     refresh_button = tk.Button(dashboard_window, text="Refresh", command=an.get_trades_closed)
     refresh_button.grid(row=10, column=0, padx=10, pady=10)  # Place the button in row 0 and spans 2 columns    
 
+def safe_int(value):
+    try:
+        return int(value)
+    except (ValueError, TypeError):
+        return 0
+
 def open_dashboard_running():
     dashboard_running_window = tk.Toplevel(root)
     dashboard_running_window.title("Dashboard - Running Trades")
@@ -468,18 +474,19 @@ def open_dashboard_running():
     nb_trx_closed_long = int(results['nb_trx_running_long'])
     nb_trx_closed_short = int(results['nb_trx_running_short'])
     nb_trx_closed = int(results['nb_trx_running'])
-    total_pnl_long = int(results['total_pnl_long'])
-    total_pnl_short = int(results['total_pnl_short'])
-    total_pnl = int(results['total_pnl'])
-    average_pnl_long = int(results['average_pnl_long'])
-    average_pnl_short = int(results['average_pnl_short'])
-    average_pnl = int(results['average_pnl'])
-    max_pnl_long = int(results['max_pnl_long'])
-    max_pnl_short = int(results['max_pnl_short'])
-    max_pnl = int(results['max_pnl'])
-    min_pnl_long = int(results['min_pnl_long'])
-    min_pnl_short = int(results['min_pnl_short'])
-    min_pnl = int(results['min_pnl'])
+    total_pnl_long = safe_int(results['total_pnl_long'])
+    total_pnl_short = safe_int(results['total_pnl_short'])
+    total_pnl = safe_int(results['total_pnl'])
+    average_pnl_long = safe_int(results['average_pnl_long'])
+    average_pnl_short = safe_int(results['average_pnl_short'])
+    average_pnl = safe_int(results['average_pnl'])
+
+    max_pnl_long = safe_int(results['max_pnl_long'])
+    max_pnl_short = safe_int(results['max_pnl_short'])
+    max_pnl = safe_int(results['max_pnl'])
+    min_pnl_long = safe_int(results['min_pnl_long'])
+    min_pnl_short = safe_int(results['min_pnl_short'])
+    min_pnl = safe_int(results['min_pnl'])
     #min_pnl_short = "{:.2f}".format(results['min_pnl_short'])
 
     """
