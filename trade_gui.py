@@ -75,9 +75,9 @@ def start_program(counter=0):
         log_text_main.update_idletasks()
         log_text_main.see(tk.END)
         show_consecutive_signal(count_lg, count_sh)
+        ln.get_info() #devancer avant open pour avoir la bonne balance
         tr.open_futures_long_aggro(count_lg)
         tr.open_futures_short_aggro(count_sh)
-        ln.get_info()
         if ln.get_nb_trx() == 0:
             print("No transaction")
             print()
@@ -120,7 +120,7 @@ def show_price():
 def show_signal():
     try:
         si.get_all_signal(interval_list)
-    except si.get_all_signal.exceptions.ConnectionError as e:
+    except si.get_all_signal as e:
         log_text_main.insert(tk.END, f"Error: {e}\n")
         print(f"Connection error: {e}")
 
