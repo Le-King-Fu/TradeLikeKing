@@ -118,7 +118,12 @@ def show_price():
     log_text_main.insert(tk.END, ln.get_price_Binance() + "\n")  # Insert DataFrame string into Text widget
 
 def show_signal():
-    si.get_all_signal(interval_list)
+    try:
+        si.get_all_signal(interval_list)
+    except si.get_all_signal.exceptions.ConnectionError as e:
+        log_text_main.insert(tk.END, f"Error: {e}\n")
+        print(f"Connection error: {e}")
+
     #def show_dataframe_in_text_widget(df, text_widget):
     # Convert the DataFrame to a string
     with open(file_path_signal, 'r') as json_file:

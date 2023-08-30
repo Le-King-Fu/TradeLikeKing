@@ -15,7 +15,7 @@ sell_seq : 3
 buy_seq : 3
 
 #control
-minute_pause : 60
+minute_pause : 1
 minimum_balance : 100000
 maximum_trades : 45
 
