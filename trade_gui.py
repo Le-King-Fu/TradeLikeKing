@@ -75,7 +75,11 @@ def start_program(counter=0):
         log_text_main.update_idletasks()
         log_text_main.see(tk.END)
         show_consecutive_signal(count_lg, count_sh)
-        ln.get_info() #devancer avant open pour avoir la bonne balance
+        try :
+            ln.get_info() #devancer avant open pour avoir la bonne balance
+        except ln.get_info() as e:
+            log_text_main.insert(tk.END, f"get_info : Connection error: {e}\n")
+            print(f"get_info : Connection error: {e}")
         tr.open_futures_long_aggro(count_lg)
         tr.open_futures_short_aggro(count_sh)
         if ln.get_nb_trx() == 0:
@@ -115,14 +119,18 @@ def start_program(counter=0):
 
 def show_price():
     log_text_main.insert(tk.END, ln.get_price_LNMarket() + "\n")  # Insert DataFrame string into Text widget
-    log_text_main.insert(tk.END, ln.get_price_Binance() + "\n")  # Insert DataFrame string into Text widget
+    try:
+        log_text_main.insert(tk.END, ln.get_price_Binance() + "\n")  # Insert DataFrame string into Text widget
+    except ln.get_price_Binance as e:
+        log_text_main.insert(tk.END, f"show_price - Error: {e}\n")
+        print(f"show_price - Error: {e}")
 
 def show_signal():
     try:
         si.get_all_signal(interval_list)
     except si.get_all_signal as e:
-        log_text_main.insert(tk.END, f"Error: {e}\n")
-        print(f"Connection error: {e}")
+        log_text_main.insert(tk.END, f"show_signal -  error: {e}\n")
+        print(f"show_signal -  error: {e}")
 
     #def show_dataframe_in_text_widget(df, text_widget):
     # Convert the DataFrame to a string
