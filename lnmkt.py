@@ -72,13 +72,17 @@ def connect_trades():
     return lnm
 
 def get_info():
-    info = connect_trades()
-    user_info = info.get_user(format='json')
-    #print(user_info)
+    try:
+        info = connect_trades()
+        user_info = info.get_user(format='json')
+        #print(user_info)
 
-    with open(file_path_summ, 'w') as json_file:
-        json.dump(user_info, json_file, indent=2)
-    #return username, balance, nb_trx
+        with open(file_path_summ, 'w') as json_file:
+            json.dump(user_info, json_file, indent=2)
+        #return username, balance, nb_trx
+    except Exception as e:
+        print(f"Error : {e}")
+        print("Error - Info won't be updated - Try again next loop")
     
 def get_price_LNMarket():
     while True:
@@ -93,7 +97,7 @@ def get_price_LNMarket():
             return "LN Market : "+ bitcoin_price_formatted
         except Exception as e:
             print(f"Error : {e}")
-            print("Error - Info won't be updated - Try again next loop")
+            print("Error - LNM Price won't be updated - Try again next loop")
 
 def check_balance():
     with open(file_path_summ, 'r') as json_file:
