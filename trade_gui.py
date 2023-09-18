@@ -10,6 +10,7 @@ import yaml
 import pandas as pd
 import time
 
+import threading
 
 
 current_directory = os.getcwd()
@@ -33,12 +34,19 @@ total_duration = config_data['total_duration']
 time_interval = config_data['time_interval']
 interval_main = config_data['interval_main']
 interval_list = config_data['interval_list']
+variation_t4_abs = config_data['variation_t4_abs']
+
 #start_time = time.time()
 
 is_running = False
+bitcoin_price_t4 = 0
+bitcoin_price_t3 = 0
+bitcoin_price_t2 = 0 
+bitcoin_price_t1 = 0
+bitcoin_price_t0 = 0
 
 def toggle_status():
-    global is_running
+    global is_running#, bitcoin_price_t1, bitcoin_price_t2, bitcoin_price_t3, bitcoin_price_t4
     if is_running:
         is_running = False
         start_button.grid()  # Show the "Start Program" button
@@ -49,12 +57,13 @@ def toggle_status():
         is_running = True
         start_button.grid_remove()  # Hide the "Start Program" button
         stop_button.grid()  # Show the "Stop Program" button
-        start_program()
 
+        start_program()
+        #thread_start = threading.Thread(target=start_program)
+        #thread_start.start()
         #signal.get_historic_signal()
 
 def start_program(counter=0):
-
     if not is_running:
         return  # Stop the loop if is_running is set to False
     if counter <= total_duration:  # Stop after 24 hours (86,400 seconds)    
@@ -63,13 +72,18 @@ def start_program(counter=0):
         status_label.config(text="Running", fg="green")
         #log_text_main.delete('1.0', tk.END)
         start_time = dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        start_str = start_time + " - Let's gooooooo!\n"
+        start_str = "___---*** " + start_time + " - Let's gooooooo! ***---___\n"
         log_text_main.see(tk.END)
         log_text_main.insert(tk.END,"\n" + start_str)  # Insert DataFrame string into Text widget
-        show_price()
+        diff_pct_t0_t4 = show_lnm_price()
+        #price_lnm_t0 = show_lnm_price()
+        #update_lnm_price(price_lnm_t0)
         log_text_main.update_idletasks()
         log_text_main.see(tk.END)
         show_signal()
+        #thread_signal = threading.Thread(target=show_signal)
+        #thread_signal.start()
+        #thread_signal.join()
         count_sh = str(si.get_short_seq())
         count_lg = str(si.get_long_seq())
         log_text_main.update_idletasks()
@@ -80,13 +94,16 @@ def start_program(counter=0):
         except ln.get_info() as e:
             log_text_main.insert(tk.END, f"get_info : Connection error: {e}\n")
             print(f"get_info : Connection error: {e}")
-        tr.open_futures_long_aggro(count_lg)
-        tr.open_futures_short_aggro(count_sh)
+        tr.open_futures_long_aggro(count_lg, diff_pct_t0_t4)
+        tr.open_futures_short_aggro(count_sh, diff_pct_t0_t4)
         if ln.get_nb_trx() == 0:
             print("No transaction")
             print()
         else: 
             show_trades()
+            #thread_trades = threading.Thread(targe=show_trades)
+            #thread_trades.start()
+            #thread_trades.join()
             log_text_main.update_idletasks()
             log_text_main.see(tk.END)
             show_margin()
@@ -111,20 +128,82 @@ def start_program(counter=0):
         #show_trades()
         #time.sleep(time_interval)
         end_time = dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')   
-        end_str = end_time + " - Iteration done!\n"
+        end_str = "\n~~~---*** " + end_time + " - Iteration done! ***---~~~\n"
         log_text_main.see(tk.END)
         log_text_main.insert(tk.END,"\n" + end_str)  # Insert DataFrame string into Text widget
         log_text_main.update_idletasks()
         repeat_id = root.after(time_interval*1000, start_program, counter + time_interval)
 
-def show_price():
-    log_text_main.insert(tk.END, ln.get_price_LNMarket() + "\n")  # Insert DataFrame string into Text widget
-    try:
-        log_text_main.insert(tk.END, ln.get_price_Binance() + "\n")  # Insert DataFrame string into Text widget
-    except ln.get_price_Binance as e:
-        log_text_main.insert(tk.END, f"show_price - Error: {e}\n")
-        print(f"show_price - Error: {e}")
+def show_lnm_price():
+    global is_running,bitcoin_price_t0, bitcoin_price_t1, bitcoin_price_t2, bitcoin_price_t3, bitcoin_price_t4
 
+        #update
+    bitcoin_price_t4 = bitcoin_price_t3
+    bitcoin_price_t3 = bitcoin_price_t2
+    bitcoin_price_t2 = bitcoin_price_t1
+    bitcoin_price_t1 = bitcoin_price_t0
+
+    info = ln.connect_trades()
+    data = info.futures_get_ticker(format='json')
+    bitcoin_price_t0 = float(data['lastPrice'])
+
+    diff_t0_t1 = bitcoin_price_t0 - bitcoin_price_t1
+    diff_t0_t2 = bitcoin_price_t0 - bitcoin_price_t2
+    diff_t0_t3 = bitcoin_price_t0 - bitcoin_price_t3
+    diff_t0_t4 = bitcoin_price_t0 - bitcoin_price_t4
+    
+    if int(bitcoin_price_t1) ==0:
+        diff_t0_t1 = 0
+    else:
+        diff_t0_t1 = bitcoin_price_t0 - bitcoin_price_t1
+
+    if int(bitcoin_price_t2) == 0:
+        diff_t0_t2 = 0
+    else:
+        diff_t0_t2 = bitcoin_price_t0 - bitcoin_price_t2
+    
+    if int(bitcoin_price_t3) == 0:
+        diff_t0_t3 = 0
+    else:
+        diff_t0_t3 = bitcoin_price_t0 - bitcoin_price_t3
+    
+    if int(bitcoin_price_t4) == 0:
+        diff_t0_t4 = 0
+    else:
+        diff_t0_t4 = bitcoin_price_t0 - bitcoin_price_t4
+            
+    diff_pct_t0_t1 = float(diff_t0_t1)/bitcoin_price_t0
+    diff_pct_t0_t2 = float(diff_t0_t2)/bitcoin_price_t0
+    diff_pct_t0_t3 = float(diff_t0_t3)/bitcoin_price_t0
+    diff_pct_t0_t4 = float(diff_t0_t4)/bitcoin_price_t0
+
+    log_text_main.insert(tk.END, "T0 : " + "{:.2f}".format(bitcoin_price_t0) + " $/BTC\n")
+    log_text_main.insert(tk.END, "T1 : " + "{:.2f}".format(bitcoin_price_t1) + " $/BTC (Variation : " + "{:.2f}".format(diff_t0_t1) + " (" + "{:.4%}".format(diff_pct_t0_t1) +")\n")
+    log_text_main.insert(tk.END, "T2 : " + "{:.2f}".format(bitcoin_price_t2) + " $/BTC (Variation : " + "{:.2f}".format(diff_t0_t2) + " (" + "{:.4%}".format(diff_pct_t0_t2) +")\n")
+    log_text_main.insert(tk.END, "T3 : " + "{:.2f}".format(bitcoin_price_t3) + " $/BTC (Variation : " + "{:.2f}".format(diff_t0_t3) + " (" + "{:.4%}".format(diff_pct_t0_t3) +")\n")
+    log_text_main.insert(tk.END, "T4 : " + "{:.2f}".format(bitcoin_price_t4) + " $/BTC (Variation : " + "{:.2f}".format(diff_t0_t4) + " (" + "{:.4%}".format(diff_pct_t0_t4) +")\n")
+
+    print("Price")
+    print("T0 : " + "{:.2f}".format(bitcoin_price_t0) + " $/BTC")
+    print("T1 : " + "{:.2f}".format(bitcoin_price_t1) + " $/BTC (Variation : " + "{:.2f}".format(diff_t0_t1) + " (" + "{:.4%}".format(diff_pct_t0_t1) +")")
+    print("T2 : " + "{:.2f}".format(bitcoin_price_t2) + " $/BTC (Variation : " + "{:.2f}".format(diff_t0_t2) + " (" + "{:.4%}".format(diff_pct_t0_t2) +")")
+    print("T3 : " + "{:.2f}".format(bitcoin_price_t3) + " $/BTC (Variation : " + "{:.2f}".format(diff_t0_t3) + " (" + "{:.4%}".format(diff_pct_t0_t3) +")")
+    print("T4 : " + "{:.2f}".format(bitcoin_price_t4) + " $/BTC (Variation : " + "{:.2f}".format(diff_t0_t4) + " (" + "{:.4%}".format(diff_pct_t0_t4) +")")
+    
+    return diff_pct_t0_t4
+
+    """ V1 - OUT
+    info = ln.connect_trades()
+    data = info.futures_get_ticker(format='json')
+    #print(data['lastPrice'])
+    lnm_price_t0 = float(data['lastPrice'])
+    lnm_price_t0_formatted = "{:.2f}".format(lnm_price_t0)
+    log_text_main.insert(tk.END, "LNM Price (t0) : " + lnm_price_t0_formatted + "\n")  # Insert DataFrame string into Text widget
+    log_text_main.insert(tk.END, "LNM Price (t1) : " + lnm_price_t1_formatted + "\n")  # Insert DataFrame string into Text widget
+    lnm_price_t1_formatted = lnm_price_t0_formatted
+    #log_text_main.insert(tk.END, "LNM Price (t1) : " + lnm_price_t1_formatted + "\n")  # Insert DataFrame string into Text widget
+    return lnm_price_t0_formatted
+    """
 def show_signal():
     try:
         si.get_all_signal(interval_list)
@@ -688,6 +767,25 @@ if __name__ == "__main__":
     #repeat_id = 0
     def set_background_color(widget, color):
         widget.configure(bg=color)
+
+    #    let's threeeead.. or not.. doesnt work
+    #main_thread = threading.Thread(target=start_program)
+    #main_thread.daemon = True  # Set the thread as daemon so it will exit when the main program exits
+    #main_thread.start()
+    """
+    bitcoin_price_t4 = 0
+    bitcoin_price_t3 = 0
+    bitcoin_price_t2 = 0 
+    bitcoin_price_t1 = 0
+    diff_t0_t1 = float(0)
+    diff_t0_t2 = float(0)
+    diff_t0_t3 = float(0)
+    diff_t0_t4 = float(0)
+    diff_pct_t0_t1 = float(0)
+    diff_pct_t0_t2 = float(0)
+    diff_pct_t0_t3 = float(0)
+    diff_pct_t0_t4 = float(0)
+    """
 
     # Set the main background color of the root window
     set_background_color(root, bitcoin_orange)

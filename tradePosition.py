@@ -18,6 +18,7 @@ minimum_balance = config_data['minimum_balance']
 maximum_trade = config_data['maximum_trades']
 sell_seq = config_data['sell_seq']
 buy_seq = config_data['buy_seq']
+variation_t4_abs = config_data['variation_t4_abs']
 
 def main():
     #open_futures()
@@ -107,13 +108,13 @@ J'essaie plus agressif, j'ouvre apres 2 strong et je ferme quand ca change.
 """
 #min_n_aggro = 3
 
-def open_futures_long_aggro(count_lg):
+def open_futures_long_aggro(count_lg, diff_pct_t0_t4):
     balance = ln.check_balance()
     time_difference = get_time_diff()
     #count = signal.get_long_seq()
     nb_trx = ln.get_nb_trx()
     print("Consecutive STRONG BUY : ",count_lg)
-    if int(count_lg) >= buy_seq and time_difference >= datetime.timedelta(minutes=minute_pause) and balance == "OK" and nb_trx < maximum_trade:
+    if int(count_lg) >= buy_seq and time_difference >= datetime.timedelta(minutes=minute_pause) and balance == "OK" and nb_trx < maximum_trade and abs(diff_pct_t0_t4) >= variation_t4_abs:
         lnm = ln.connect_trades()        
         opened_future = lnm.futures_new_position({
             'type': 'm', # m for market of l for limit
@@ -124,14 +125,14 @@ def open_futures_long_aggro(count_lg):
         print(opened_future)
         signal.reset_seq()
 
-def open_futures_short_aggro(count_sh):
+def open_futures_short_aggro(count_sh, diff_pct_t0_t4):
     balance = ln.check_balance()
     time_difference = get_time_diff()
     #nb STRONG_SELL consecutifs
     #count = signal.get_short_seq()
     print("Consecutive STRONG SELL : ",count_sh)
     nb_trx = ln.get_nb_trx()
-    if int(count_sh) >= sell_seq and time_difference >= datetime.timedelta(minutes=minute_pause) and balance == "OK" and nb_trx < maximum_trade:
+    if int(count_sh) >= sell_seq and time_difference >= datetime.timedelta(minutes=minute_pause) and balance == "OK" and nb_trx < maximum_trade and abs(diff_pct_t0_t4) >= variation_t4_abs:
         lnm = ln.connect_trades()  
         opened_future = lnm.futures_new_position({
             'type': 'm', # m for market of l for limit

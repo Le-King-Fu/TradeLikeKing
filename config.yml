@@ -11,8 +11,13 @@ interval_main : "5m"
 #trade
 new_futures_amount : 2000
 leverage : 50
-sell_seq : 3
-buy_seq : 3
+
+#condition achat #1 - sequence consecutive
+sell_seq : 4
+buy_seq : 4
+
+#condition achat #2 - sequence consecutive
+variation_t4_abs : 0.005
 
 #control
 minute_pause : 1
@@ -20,19 +25,25 @@ minimum_balance : 100000
 maximum_trades : 45
 
 ##condition declencher perte(stoploss)
-#sequence dans le sens contraire
-nb_seq_reversal : 2
-#stoploss via pnl - doit etre plus haut que margin
-pnl_loss : -0.60
-
+# 1  - sequence dans le sens contraire + profit
 #pnl apres frais cible
 target : 0.03
+
+# 2 - si loss > que pnl_loss et sequence reverse (incl. Neutral)
+nb_seq_reversal : 2
+
+#stoploss via pnl - doit etre plus haut que margin
+pnl_loss : -0.60
+min_leverage : 25
+
 
 ##pnl qui declenche ajout a la marge - au cas ou
 min_margin : -0.80
 add_margin_amount : 1000
 #sous ce niveau, on ajoute pas a la marge - not used
-min_leverage : 25
+
+
+
 
 
 

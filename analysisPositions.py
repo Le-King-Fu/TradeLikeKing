@@ -212,7 +212,7 @@ def get_list_close_long():
     for index, row in df_trades.iterrows():
         if row['in_profit'] == 1 and row['side'] == 'b' and rec == 'STRONG_SELL':
             id_list.append(row['id'])
-        if row['take_a_L'] == 1 and row['side'] == 'b' and rec == 'STRONG_SELL':
+        if row['take_a_L'] == 1 and row['side'] == 'b' and rec == 'STRONG_SELL' and row['leverage'] < min_leverage:
             id_list.append(row['id'])
     return id_list
 
@@ -225,7 +225,7 @@ def get_list_close_short():
     for index, row in df_trades.iterrows():
         if row['in_profit'] == 1 and row['side'] == 's' and rec == 'STRONG_BUY':
             id_list.append(row['id'])
-        elif row['take_a_L'] == 1 and row['side'] == 's' and rec == 'STRONG_BUY':
+        elif row['take_a_L'] == 1 and row['side'] == 's' and rec == 'STRONG_BUY' and row['leverage'] < min_leverage:
             id_list.append(row['id'])
     return id_list
 
