@@ -254,7 +254,7 @@ def get_list_close_long_aggro(count_sh):
         #on essaie d'ajouter une fermeture plus agressive sur changement de tendance
         #idealement frais perdu losing trade < gain sur winners
         #trop agressif, j'ajoute une perte minimum dans take_a_L pour garder un peu en vie        
-        elif row['take_a_L'] == 1 and row['side'] == 'b' and count_sh >= nb_seq_reversal:
+        elif row['take_a_L'] == 1 and row['side'] == 'b' and count_sh >= nb_seq_reversal and row['leverage'] < min_leverage:
             id_list.append(row['id'])
     return id_list
 
@@ -277,7 +277,7 @@ def get_list_close_short_aggro(count_lg):
         #on essaie d'ajouter une fermeture plus agressive sur changement de tendance
         #idealement frais perdu losing trade < gain sur winners
         #trop agressif, j'ajoute une perte minimum dans take_a_L pour garder un peu en vie
-        elif row['take_a_L'] == 1 and row['side'] == 's'and count_lg >= nb_seq_reversal:
+        elif row['take_a_L'] == 1 and row['side'] == 's'and count_lg >= nb_seq_reversal and row['leverage'] < min_leverage:
             id_list.append(row['id'])
 
 
