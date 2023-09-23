@@ -115,7 +115,7 @@ def start_program(counter=0):
             log_text_main.see(tk.END)
             tr.close_futures_short_aggro(count_lg)
             tr.close_futures_long_aggro(count_sh)
-            an.get_trades_closed()
+            #an.get_trades_closed()
             #an.get_closing_msg_long()
             #an.get_closing_msg_short()
             log_text_main.update_idletasks()

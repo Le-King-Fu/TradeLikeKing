@@ -235,11 +235,11 @@ def get_list_close_short():
 def get_list_close_long_aggro(count_sh):
     id_list = []
     count_sh = int(count_sh)
-    rec = signal.get_main_signal_new()
+    #rec = signal.get_main_signal_new()
     rec_1m = signal.get_1m_signal_new()
     #on enleve NEUTRAL pr profit- idealement, va permettre de collecter profit plus tôt
     closeif = ['BUY','STRONG_BUY']
-    closeif_loss = ['BUY','STRONG_BUY','NEUTRAL']
+    #closeif_loss = ['BUY','STRONG_BUY','NEUTRAL']
     #df_trades = get_trades()
     with open(file_path_summ, 'r') as json_file:
         df_trades = pd.read_json(json_file)
@@ -261,11 +261,11 @@ def get_list_close_long_aggro(count_sh):
 def get_list_close_short_aggro(count_lg):
     id_list = []
     count_lg = int(count_lg)
-    rec = signal.get_main_signal_new()
+    #rec = signal.get_main_signal_new()
     rec_1m = signal.get_1m_signal_new()
     #on enleve NEUTRAL pr profit - idealement, va permettre de collecter profit plus tôt
     closeif = ['SELL','STRONG_SELL']
-    closeif_loss = ['SELL','STRONG_SELL','NEUTRAL']
+    #closeif_loss = ['SELL','STRONG_SELL','NEUTRAL']
     #df_trades = get_trades()
     with open(file_path_summ, 'r') as json_file:
         df_trades = pd.read_json(json_file)
